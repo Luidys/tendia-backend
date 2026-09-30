@@ -1,0 +1,160 @@
+// Esquema de base de datos de Tendia.
+// Pensado para escalar a multi-tenant: muchos Comercios, cada uno con
+// sus propios usuarios "comerciante" (dueños/staff) y "cliente" (compradores).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // en producción: Postgres (Neon, Supabase, RDS, etc.)
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COMERCIANTE
+  CLIENTE
+}
+
+model Comercio {
+  id         String    @id @default(uuid())
+  nombre     String
+  categoria  String?
+  createdAt  DateTime  @default(now())
+
+  // Identificadores que Meta usa para enrutar un mensaje entrante hacia
+  // este comercio (cada negocio conecta su propio número/página).
+  whatsappPhoneNumberId String? @unique
+  instagramPageId       String? @unique
+
+  // Logo del negocio, guardado como imagen en base64 (data URI).
+  logo String?
+
+  // Cobros: tasa del día (Bs por USD, para Pago Móvil) y datos donde el
+  // cliente debe pagar (JSON validado al guardar: pago_movil / zelle / binance).
+  tasaBs            Float?
+  tasaBsActualizada DateTime?
+  metodosPago       String?
+
+  // Usuarios con rol COMERCIANTE que administran este negocio (dueño, staff)
+  staff      Usuario[] @relation("StaffDeComercio")
+
+  // Relación muchos-a-muchos: un cliente puede comprarle a varios comercios
+  clientes   ClienteComercio[]
+  productos  Producto[]
+  pedidos    Pedido[]
+  conversaciones Conversacion[]
+}
+
+// Estado de una conversación activa del agente de IA con un cliente en un
+// canal (WhatsApp/Instagram). Guarda el carrito en curso para que el
+// cliente pueda ir agregando productos mensaje a mensaje.
+model Conversacion {
+  id            String   @id @default(uuid())
+  comercioId    String
+  comercio      Comercio @relation(fields: [comercioId], references: [id])
+  telefono      String   // número de WhatsApp o PSID de Instagram
+  canal         String   // "whatsapp" | "instagram"
+  estado        String   @default("inicio") // inicio | viendo_menu | armando_pedido
+  carritoJson   String   @default("[]")
+  ultimoMenuJson String  @default("[]")
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  @@unique([comercioId, telefono, canal])
+}
+
+model Usuario {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  telefono       String?
+  passwordHash   String
+  nombre         String
+  role           Role
+  createdAt      DateTime  @default(now())
+
+  // Recuperación de contraseña: token de un solo uso con vencimiento.
+  resetToken       String?   @unique
+  resetTokenExpira DateTime?
+
+  // Solo aplica si role = COMERCIANTE
+  comercioId     String?
+  comercio       Comercio? @relation("StaffDeComercio", fields: [comercioId], references: [id])
+
+  // Solo aplica si role = CLIENTE
+  comerciosDondeCompra ClienteComercio[]
+  pedidos        Pedido[]
+}
+
+// Tabla puente: relación cliente <-> comercio (para que un cliente pueda
+// tener historial en varios negocios distintos sin duplicar su cuenta).
+model ClienteComercio {
+  id          String   @id @default(uuid())
+  clienteId   String
+  cliente     Usuario  @relation(fields: [clienteId], references: [id])
+  comercioId  String
+  comercio    Comercio @relation(fields: [comercioId], references: [id])
+  totalComprado Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  @@unique([clienteId, comercioId])
+}
+
+model Producto {
+  id          String   @id @default(uuid())
+  comercioId  String
+  comercio    Comercio @relation(fields: [comercioId], references: [id])
+  nombre      String
+  categoria   String?
+  precio      Int
+  precioAntes Int?
+  promo       String?
+  stock       Int      @default(0)
+  imagen1     String?  // foto del producto, guardada como imagen en base64 (data URI)
+  imagen2     String?
+  createdAt   DateTime @default(now())
+}
+
+model Pedido {
+  id          String   @id @default(uuid())
+  comercioId  String
+  comercio    Comercio @relation(fields: [comercioId], references: [id])
+  clienteId   String
+  cliente     Usuario  @relation(fields: [clienteId], references: [id])
+  items       String   // JSON serializado con productos y cantidades
+  total       Int
+  estado      String   @default("nuevo") // nuevo | proceso | listo | entregado | cancelado
+  // pendiente | por_verificar | pagado | rechazado | reembolso_pendiente | reembolsado
+  estadoPago  String   @default("pendiente")
+  canal       String   @default("web")   // web | whatsapp | instagram | marketplace
+  createdAt   DateTime @default(now())
+  pagos       Pago[]
+}
+
+// Cada declaración de pago del cliente. Registro de auditoría: NUNCA se borra.
+// Montos: montoUsd en centavos de USD; montoBs en céntimos de Bs (solo Pago Móvil).
+model Pago {
+  id            String   @id @default(uuid())
+  pedidoId      String
+  pedido        Pedido   @relation(fields: [pedidoId], references: [id])
+  comercioId    String
+  clienteId     String
+  metodo        String   // pago_movil | zelle | binance
+  montoUsd      Int
+  montoBs       Int?
+  tasaBs        Float?
+  referencia    String   // referencia/confirmación que reporta el cliente (normalizada)
+  comprobante   String?  // captura del pago (imagen base64), opcional
+  estado        String   @default("por_verificar") // por_verificar | aprobado | rechazado
+  motivoRechazo String?
+  verificadoPor String?
+  verificadoEn  DateTime?
+  // Evita reutilizar el mismo comprobante: única mientras el pago esté activo
+  // (por_verificar/aprobado); se libera (null) al rechazarse.
+  claveUnica    String?  @unique
+  canal         String   @default("web")
+  createdAt     DateTime @default(now())
+
+  @@index([comercioId, estado])
+  @@index([pedidoId])
+}
