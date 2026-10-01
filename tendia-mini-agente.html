@@ -1,340 +1,917 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Tendia · Mini agente de IA para tu negocio</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<style>
-  :root{
-    --paper:#FBF7EF;
-    --paper-2:#F3EEE1;
-    --ink:#182430;
-    --ink-soft:#3A4654;
-    --mango:#F2A93B;
-    --mango-deep:#C97F19;
-    --verde:#2F7A5E;
-    --verde-deep:#1F5943;
-    --verde-pale:#E4F0EA;
-    --clay:#C1502E;
-    --clay-pale:#FBE6DE;
-    --slate:#6B7280;
-    --line:#E4DCC9;
-    --white:#FFFFFF;
-    --radius:16px;
-    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
-    --font-body: 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Helvetica, Arial, sans-serif;
-    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(ellipse 700px 500px at 50% 0%, rgba(255,255,255,0.5), transparent 60%),
-      radial-gradient(ellipse 900px 700px at 50% 100%, #C9BC9E, transparent 70%),
-      linear-gradient(180deg, #E6DCC2, #C9BC9E 60%, #B9AA88);
-    font-family:var(--font-body);
-    color:var(--ink);
-    min-height:100vh;
-    display:flex;
-    align-items:flex-start;
-    justify-content:center;
-    padding:34px 10px 50px;
-  }
-  /* ---------- marco tipo teléfono ---------- */
-  .phone{
-    width:100%;
-    max-width:428px;
-    background:var(--paper);
-    border-radius:34px;
-    box-shadow:
-      0 2px 0 rgba(255,255,255,0.5) inset,
-      0 50px 80px -24px rgba(20,20,10,0.55),
-      0 18px 30px -14px rgba(20,20,10,0.4),
-      0 0 0 10px #16233A,
-      0 0 0 11px #2a3648,
-      0 0 0 13px #0e161f;
-    overflow:hidden;
-    position:relative;
-    min-height:850px;
-    display:flex;
-    flex-direction:column;
-    transform:perspective(1400px) rotateX(1.5deg);
-  }
-  .notch{
-    position:absolute; top:0; left:50%; transform:translateX(-50%);
-    width:120px; height:22px; background:#16233A; border-radius:0 0 14px 14px; z-index:50;
-    box-shadow:0 2px 4px rgba(0,0,0,.3);
-  }
-  .status{
-    height:14px;
-  }
-  /* ---------- topbar ---------- */
-  .topbar{
-    padding:22px 20px 14px;
-    display:flex; align-items:center; justify-content:space-between;
-    border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg, #FFFDF8, var(--paper));
-    position:relative; z-index:5;
-    box-shadow:0 6px 14px -10px rgba(24,36,48,0.25);
-  }
-  .brand{ display:flex; align-items:center; gap:10px; }
-  .brand-mark{
-    width:36px;height:36px;border-radius:10px;
-    background:linear-gradient(155deg, #3B9576, var(--verde) 45%, var(--verde-deep));
-    display:flex;align-items:center;justify-content:center;
-    color:#fff; font-family:var(--font-display); font-weight:700; font-size:17px;
-    box-shadow:
-      inset 0 1.5px 0 rgba(255,255,255,0.45),
-      inset 0 -3px 6px rgba(0,0,0,0.18),
-      0 6px 12px -4px rgba(31,89,67,0.55);
-  }
-  .brand-name{ font-family:var(--font-display); font-size:19px; font-weight:700; letter-spacing:0.2px; }
-  .brand-sub{ font-size:11px; color:var(--slate); margin-top:-2px; }
-  .session-chip{
-    font-size:11px; background:linear-gradient(180deg,#fff,var(--paper-2)); border:1px solid var(--line); color:var(--ink-soft);
-    padding:6px 10px; border-radius:100px; cursor:pointer; font-weight:600;
-    box-shadow:0 1px 0 rgba(255,255,255,.8) inset, 0 2px 5px -2px rgba(24,36,48,.25);
-  }
-  /* ---------- contenido ---------- */
-  .screen{ flex:1; overflow-y:auto; padding:18px 18px 90px; }
-  .screen::-webkit-scrollbar{ display:none; }
-  h1,h2,h3{ font-family:var(--font-display); margin:0 0 4px; }
-  p{ margin:0; }
-  .muted{ color:var(--slate); font-size:13px; }
-  .eyebrow{
-    text-transform:uppercase; letter-spacing:1.4px; font-size:10.5px; font-weight:700; color:var(--verde-deep);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tendia · Mini agente de IA para tu negocio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --paper: #FBF7EF;
+      --paper-2: #F3EEE1;
+      --ink: #182430;
+      --ink-soft: #3A4654;
+      --mango: #F2A93B;
+      --mango-deep: #C97F19;
+      --verde: #2F7A5E;
+      --verde-deep: #1F5943;
+      --verde-pale: #E4F0EA;
+      --clay: #C1502E;
+      --clay-pale: #FBE6DE;
+      --slate: #6B7280;
+      --line: #E4DCC9;
+      --white: #FFFFFF;
+      --radius: 16px;
+      --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+      --font-body: 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Helvetica, Arial, sans-serif;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    }
 
-  /* ---------- login ---------- */
-  .hero-login{
-    padding:34px 26px 20px; text-align:center;
-  }
-  .hero-mark{
-    width:78px;height:78px; margin:0 auto 14px;
-    filter:drop-shadow(0 16px 22px rgba(193,80,46,0.4)) drop-shadow(0 4px 6px rgba(24,36,48,0.15));
-  }
-  .wordmark{ display:flex; align-items:baseline; justify-content:center; gap:2px; }
-  .wordmark .tm{ font-size:10px; color:var(--slate); font-weight:700; align-self:flex-start; margin-top:2px; }
-  .role-toggle{
-    display:flex; background:var(--paper-2); border-radius:100px; padding:4px; margin:22px 18px 0; gap:4px;
-  }
-  .role-toggle button{
-    flex:1; border:none; background:transparent; padding:11px 8px; border-radius:100px;
-    font-family:var(--font-body); font-weight:700; font-size:13.5px; color:var(--slate); cursor:pointer;
-    transition:all .15s ease;
-  }
-  .role-toggle button.active{ background:var(--ink); color:#fff; }
-  .login-form{ padding:22px 18px 0; display:flex; flex-direction:column; gap:12px; }
-  .field label{ font-size:11.5px; font-weight:700; color:var(--ink-soft); display:block; margin-bottom:5px; }
-  .field input, .field select, .field textarea{
-    width:100%; padding:12px 13px; border-radius:11px; border:1.5px solid var(--line);
-    background:#fff; font-size:14px; font-family:var(--font-body); color:var(--ink);
-  }
-  .field input:focus, .field select:focus, .field textarea:focus{ outline:2px solid var(--mango); border-color:var(--mango); }
-  .btn{
-    border:none; border-radius:12px; padding:13px 16px; font-weight:700; font-size:14px; cursor:pointer;
-    font-family:var(--font-body); display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    transition:transform .08s ease, box-shadow .08s ease;
-  }
-  .btn:active{ transform:translateY(1px) scale(0.99); }
-  .btn:focus-visible{ outline:3px solid var(--mango-deep); outline-offset:2px; }
-  .btn-primary{
-    background:linear-gradient(180deg, #263950, var(--ink) 70%); color:#fff; width:100%;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 10px 18px -8px rgba(24,36,48,.55);
-  }
-  .btn-primary:hover{ background:linear-gradient(180deg,#2c4159,#0e161f 70%); }
-  .btn-verde{
-    background:linear-gradient(180deg, #3B9576, var(--verde-deep)); color:#fff;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 8px 16px -8px rgba(31,89,67,.65);
-  }
-  .btn-mango{
-    background:linear-gradient(180deg, #FFC069, var(--mango-deep)); color:#3a2405;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 8px 16px -8px rgba(201,127,25,.6);
-  }
-  .btn-outline{
-    background:linear-gradient(180deg,#fff,var(--paper-2)); border:1.5px solid var(--line); color:var(--ink);
-    box-shadow:0 2px 6px -3px rgba(24,36,48,.2);
-  }
-  .btn-sm{ padding:8px 12px; font-size:12.5px; border-radius:9px; }
-  .demo-hint{ font-size:11.5px; color:var(--slate); text-align:center; margin-top:14px; }
-  .demo-hint b{ color:var(--ink-soft); }
+    * {
+      box-sizing: border-box;
+    }
 
-  /* ---------- receipt / signature card ---------- */
-  .receipt{
-    position:relative; background:linear-gradient(165deg,#fff,#FCFAF3); border-radius:6px; padding:20px 18px 16px;
-    box-shadow: 0 16px 30px -18px rgba(24,36,48,.45), 0 4px 10px -6px rgba(24,36,48,.15);
-  }
-  .receipt::before, .receipt::after{
-    content:""; position:absolute; left:0; right:0; height:9px;
-    background-image: radial-gradient(circle at 8px 5px, #DDD3BE 5px, transparent 5.5px);
-    background-size:16px 10px; background-repeat:repeat-x;
-  }
-  .receipt::before{ top:-5px; }
-  .receipt::after{ bottom:-5px; transform:rotate(180deg); }
-  .receipt .tear{ border-top:1.5px dashed var(--line); margin:12px 0; }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-  /* ---------- kpi grid ---------- */
-  .kpi-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-  .kpi{
-    background:linear-gradient(165deg,#fff,#FCFAF3); border:1px solid rgba(228,220,201,.7); border-radius:13px; padding:13px 14px;
-    box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 10px 20px -14px rgba(24,36,48,.35), 0 2px 5px -2px rgba(24,36,48,.08);
-  }
-  .kpi .lbl{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; color:var(--slate); font-weight:700; }
-  .kpi .val{ font-family:var(--font-mono); font-size:21px; font-weight:700; margin-top:4px; color:var(--ink); text-shadow:0 1px 0 rgba(255,255,255,.6); }
-  .kpi .delta{ font-size:11px; margin-top:3px; font-weight:600; }
-  .delta.up{ color:var(--verde-deep); }
-  .delta.down{ color:var(--clay); }
+    body {
+      background:
+        radial-gradient(ellipse 700px 500px at 50% 0%, rgba(255, 255, 255, 0.5), transparent 60%),
+        radial-gradient(ellipse 900px 700px at 50% 100%, #C9BC9E, transparent 70%),
+        linear-gradient(180deg, #E6DCC2, #C9BC9E 60%, #B9AA88);
+      font-family: var(--font-body);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 34px 10px 50px;
+    }
 
-  .card{
-    background:linear-gradient(165deg,#fff,#FCFAF3); border:1px solid rgba(228,220,201,.7); border-radius:14px; padding:16px; margin-top:14px;
-    box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 14px 26px -16px rgba(24,36,48,.4), 0 3px 8px -4px rgba(24,36,48,.1);
-  }
-  .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .section-title{ display:flex; align-items:baseline; justify-content:space-between; margin-top:26px; margin-bottom:2px; }
-  .section-title h2{ font-size:16.5px; }
-  .link-btn{ background:none; border:none; color:var(--verde-deep); font-weight:700; font-size:12.5px; cursor:pointer; }
+    /* ---------- marco tipo teléfono ---------- */
+    .phone {
+      width: 100%;
+      max-width: 428px;
+      background: var(--paper);
+      border-radius: 34px;
+      box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.5) inset,
+        0 50px 80px -24px rgba(20, 20, 10, 0.55),
+        0 18px 30px -14px rgba(20, 20, 10, 0.4),
+        0 0 0 10px #16233A,
+        0 0 0 11px #2a3648,
+        0 0 0 13px #0e161f;
+      overflow: hidden;
+      position: relative;
+      min-height: 850px;
+      display: flex;
+      flex-direction: column;
+      transform: perspective(1400px) rotateX(1.5deg);
+    }
 
-  canvas{ max-height:170px; }
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 22px;
+      background: #16233A;
+      border-radius: 0 0 14px 14px;
+      z-index: 50;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+    }
 
-  /* ---------- producto ---------- */
-  .prod{
-    display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); align-items:flex-start;
-  }
-  .prod:last-child{ border-bottom:none; }
-  .prod-thumb{
-    width:52px; height:52px; border-radius:11px; flex-shrink:0;
-    background:linear-gradient(155deg, #FFC069, var(--mango) 45%, var(--clay)); display:flex; align-items:center; justify-content:center;
-    color:#fff; font-family:var(--font-display); font-weight:700; font-size:18px;
-    box-shadow: inset 0 1.5px 0 rgba(255,255,255,.5), inset 0 -3px 6px rgba(0,0,0,.15), 0 8px 14px -6px rgba(193,80,46,.5);
-    overflow:hidden;
-  }
-  .prod-thumb img{ width:100%; height:100%; object-fit:cover; }
-  .img-picker{ display:flex; gap:8px; }
-  .img-picker label{
-    flex:1; border:1.5px dashed var(--line); border-radius:11px; padding:10px; text-align:center;
-    font-size:11.5px; color:var(--slate); cursor:pointer; position:relative; overflow:hidden; min-height:52px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .img-picker label.tiene-imagen{ border-style:solid; padding:0; }
-  .img-picker img{ width:100%; height:52px; object-fit:cover; border-radius:9px; }
-  .img-picker input[type=file]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
-  .logo-picker{ display:flex; align-items:center; gap:12px; }
-  .logo-preview{
-    width:56px; height:56px; border-radius:14px; flex-shrink:0; overflow:hidden;
-    background:linear-gradient(155deg, #FFC069, var(--mango) 45%, var(--clay));
-    display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:20px;
-  }
-  .logo-preview img{ width:100%; height:100%; object-fit:cover; }
-  .brand-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; }
-  .prod-info{ flex:1; min-width:0; }
-  .prod-info .nm{ font-weight:700; font-size:14px; }
-  .prod-info .cat{ font-size:11px; color:var(--slate); }
-  .promo-tag{
-    display:inline-block; margin-top:4px; background:var(--clay-pale); color:var(--clay); font-size:10.5px;
-    font-weight:700; padding:2px 7px; border-radius:100px;
-  }
-  .price-block{ text-align:right; flex-shrink:0; }
-  .price-now{ font-family:var(--font-mono); font-weight:700; font-size:14.5px; }
-  .price-before{ font-family:var(--font-mono); font-size:11.5px; color:var(--slate); text-decoration:line-through; }
-  .ahorro{ font-size:10.5px; color:var(--verde-deep); font-weight:700; }
+    .status {
+      height: 14px;
+    }
 
-  /* ---------- badges de estado ---------- */
-  .badge{ font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:100px; }
-  .badge.nuevo{ background:var(--verde-pale); color:var(--verde-deep); }
-  .badge.proceso{ background:#FDF1DA; color:var(--mango-deep); }
-  .badge.listo{ background:var(--verde-pale); color:var(--verde-deep); }
-  .badge.entregado{ background:var(--paper-2); color:var(--slate); }
+    /* ---------- topbar ---------- */
+    .topbar {
+      padding: 22px 20px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #FFFDF8, var(--paper));
+      position: relative;
+      z-index: 5;
+      box-shadow: 0 6px 14px -10px rgba(24, 36, 48, 0.25);
+    }
 
-  /* ---------- toggle switch ---------- */
-  .switch{ position:relative; width:42px; height:24px; flex-shrink:0; }
-  .switch input{ opacity:0; width:0; height:0; }
-  .slider{
-    position:absolute; cursor:pointer; inset:0; background:#D8D0BE; border-radius:100px; transition:.2s;
-    box-shadow:inset 0 2px 4px rgba(0,0,0,.15);
-  }
-  .slider::before{
-    content:""; position:absolute; height:18px; width:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;
-    box-shadow:0 2px 4px rgba(0,0,0,.3), 0 1px 0 rgba(255,255,255,.4) inset;
-  }
-  .switch input:checked + .slider{ background:linear-gradient(180deg,#3B9576,var(--verde-deep)); }
-  .switch input:checked + .slider::before{ transform:translateX(18px); }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  /* ---------- chat bubble sim ---------- */
-  .chat-window{
-    background:linear-gradient(165deg,#F2EADA,#E9DFC8); border-radius:14px; padding:14px; margin-top:12px;
-    box-shadow:inset 0 2px 6px rgba(24,36,48,.08);
-  }
-  .bubble{ max-width:82%; padding:9px 12px; border-radius:14px; font-size:13px; margin-bottom:8px; line-height:1.4; }
-  .bubble.in{ background:#fff; border-bottom-left-radius:4px; box-shadow:0 3px 8px -4px rgba(24,36,48,.25); }
-  .bubble.out{
-    background:linear-gradient(180deg,#3B9576,var(--verde-deep)); color:#fff; margin-left:auto; border-bottom-right-radius:4px;
-    box-shadow:0 4px 10px -4px rgba(31,89,67,.55);
-  }
-  .chat-ch{ font-size:10.5px; color:var(--slate); text-align:center; margin-bottom:10px; }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(155deg, #3B9576, var(--verde) 45%, var(--verde-deep));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      box-shadow:
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.18),
+        0 6px 12px -4px rgba(31, 89, 67, 0.55);
+    }
 
-  /* ---------- bottom nav ---------- */
-  .bottomnav{
-    position:absolute; left:0; right:0; bottom:0; background:linear-gradient(180deg,#fff,#FDFBF5); border-top:1px solid var(--line);
-    display:flex; padding:8px 6px calc(10px + env(safe-area-inset-bottom, 0px));
-    box-shadow: 0 -10px 22px -14px rgba(24,36,48,.35);
-    z-index:10;
-  }
-  .navbtn{
-    flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
-    font-size:9.5px; color:var(--slate); font-weight:600; cursor:pointer; padding:6px 1px; border-radius:10px;
-    transition:transform .1s ease; min-width:0;
-  }
-  .navbtn:active{ transform:scale(0.94); }
-  .navbtn.active{ color:var(--verde-deep); background:var(--verde-pale); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); }
-  .navbtn .ic{ width:20px; height:20px; }
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
 
-  /* ---------- toast ---------- */
-  .toast{
-    position:absolute; left:16px; right:16px; bottom:78px; background:var(--ink); color:#fff; padding:12px 16px;
-    border-radius:12px; font-size:12.5px; z-index:80; box-shadow:0 12px 24px rgba(0,0,0,.3);
-    opacity:0; transform:translateY(8px); transition:all .25s ease; pointer-events:none;
-  }
-  .toast.show{ opacity:1; transform:translateY(0); }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--slate);
+      margin-top: -2px;
+    }
 
-  .empty{ text-align:center; padding:40px 20px; color:var(--slate); font-size:13px; }
-  .empty .em-mark{ font-size:30px; margin-bottom:8px; }
+    .session-chip {
+      font-size: 11px;
+      background: linear-gradient(180deg, #fff, var(--paper-2));
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      padding: 6px 10px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 2px 5px -2px rgba(24, 36, 48, .25);
+    }
 
-  table{ width:100%; border-collapse:collapse; font-size:12.5px; }
-  th{ text-align:left; font-size:10.5px; text-transform:uppercase; color:var(--slate); padding-bottom:8px; border-bottom:1px solid var(--line); }
-  td{ padding:9px 0; border-bottom:1px solid var(--line); }
-  tr:last-child td{ border-bottom:none; }
+    /* ---------- contenido ---------- */
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 18px 90px;
+    }
 
-  .cart-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
-  .qty{ display:flex; align-items:center; gap:8px; }
-  .qty button{ width:26px; height:26px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; font-weight:700; }
+    .screen::-webkit-scrollbar {
+      display: none;
+    }
 
-  ::selection{ background:var(--mango); color:#3a2405; }
-  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
-</style>
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-display);
+      margin: 0 0 4px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .muted {
+      color: var(--slate);
+      font-size: 13px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--verde-deep);
+    }
+
+    /* ---------- login ---------- */
+    .hero-login {
+      padding: 34px 26px 20px;
+      text-align: center;
+    }
+
+    .hero-mark {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 14px;
+      filter: drop-shadow(0 16px 22px rgba(193, 80, 46, 0.4)) drop-shadow(0 4px 6px rgba(24, 36, 48, 0.15));
+    }
+
+    .wordmark {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .wordmark .tm {
+      font-size: 10px;
+      color: var(--slate);
+      font-weight: 700;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    .role-toggle {
+      display: flex;
+      background: var(--paper-2);
+      border-radius: 100px;
+      padding: 4px;
+      margin: 22px 18px 0;
+      gap: 4px;
+    }
+
+    .role-toggle button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 11px 8px;
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--slate);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .role-toggle button.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .login-form {
+      padding: 22px 18px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 11px;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: 2px solid var(--mango);
+      border-color: var(--mango);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform .08s ease, box-shadow .08s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid var(--mango-deep);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #263950, var(--ink) 70%);
+      color: #fff;
+      width: 100%;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 10px 18px -8px rgba(24, 36, 48, .55);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(180deg, #2c4159, #0e161f 70%);
+    }
+
+    .btn-verde {
+      background: linear-gradient(180deg, #3B9576, var(--verde-deep));
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 8px 16px -8px rgba(31, 89, 67, .65);
+    }
+
+    .btn-mango {
+      background: linear-gradient(180deg, #FFC069, var(--mango-deep));
+      color: #3a2405;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 8px 16px -8px rgba(201, 127, 25, .6);
+    }
+
+    .btn-outline {
+      background: linear-gradient(180deg, #fff, var(--paper-2));
+      border: 1.5px solid var(--line);
+      color: var(--ink);
+      box-shadow: 0 2px 6px -3px rgba(24, 36, 48, .2);
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 12.5px;
+      border-radius: 9px;
+    }
+
+    .demo-hint {
+      font-size: 11.5px;
+      color: var(--slate);
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    .demo-hint b {
+      color: var(--ink-soft);
+    }
+
+    /* ---------- receipt / signature card ---------- */
+    .receipt {
+      position: relative;
+      background: linear-gradient(165deg, #fff, #FCFAF3);
+      border-radius: 6px;
+      padding: 20px 18px 16px;
+      box-shadow: 0 16px 30px -18px rgba(24, 36, 48, .45), 0 4px 10px -6px rgba(24, 36, 48, .15);
+    }
+
+    .receipt::before,
+    .receipt::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 9px;
+      background-image: radial-gradient(circle at 8px 5px, #DDD3BE 5px, transparent 5.5px);
+      background-size: 16px 10px;
+      background-repeat: repeat-x;
+    }
+
+    .receipt::before {
+      top: -5px;
+    }
+
+    .receipt::after {
+      bottom: -5px;
+      transform: rotate(180deg);
+    }
+
+    .receipt .tear {
+      border-top: 1.5px dashed var(--line);
+      margin: 12px 0;
+    }
+
+    /* ---------- kpi grid ---------- */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .kpi {
+      background: linear-gradient(165deg, #fff, #FCFAF3);
+      border: 1px solid rgba(228, 220, 201, .7);
+      border-radius: 13px;
+      padding: 13px 14px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .9) inset, 0 10px 20px -14px rgba(24, 36, 48, .35), 0 2px 5px -2px rgba(24, 36, 48, .08);
+    }
+
+    .kpi .lbl {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--slate);
+      font-weight: 700;
+    }
+
+    .kpi .val {
+      font-family: var(--font-mono);
+      font-size: 21px;
+      font-weight: 700;
+      margin-top: 4px;
+      color: var(--ink);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+    }
+
+    .kpi .delta {
+      font-size: 11px;
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    .delta.up {
+      color: var(--verde-deep);
+    }
+
+    .delta.down {
+      color: var(--clay);
+    }
+
+    .card {
+      background: linear-gradient(165deg, #fff, #FCFAF3);
+      border: 1px solid rgba(228, 220, 201, .7);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 14px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .9) inset, 0 14px 26px -16px rgba(24, 36, 48, .4), 0 3px 8px -4px rgba(24, 36, 48, .1);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 26px;
+      margin-bottom: 2px;
+    }
+
+    .section-title h2 {
+      font-size: 16.5px;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--verde-deep);
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    canvas {
+      max-height: 170px;
+    }
+
+    /* ---------- producto ---------- */
+    .prod {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: flex-start;
+    }
+
+    .prod:last-child {
+      border-bottom: none;
+    }
+
+    .prod-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 11px;
+      flex-shrink: 0;
+      background: linear-gradient(155deg, #FFC069, var(--mango) 45%, var(--clay));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .5), inset 0 -3px 6px rgba(0, 0, 0, .15), 0 8px 14px -6px rgba(193, 80, 46, .5);
+      overflow: hidden;
+    }
+
+    .prod-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .img-picker {
+      display: flex;
+      gap: 8px;
+    }
+
+    .img-picker label {
+      flex: 1;
+      border: 1.5px dashed var(--line);
+      border-radius: 11px;
+      padding: 10px;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--slate);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-picker label.tiene-imagen {
+      border-style: solid;
+      padding: 0;
+    }
+
+    .img-picker img {
+      width: 100%;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 9px;
+    }
+
+    .img-picker input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .logo-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-preview {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: linear-gradient(155deg, #FFC069, var(--mango) 45%, var(--clay));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .logo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+
+    .prod-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .prod-info .nm {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .prod-info .cat {
+      font-size: 11px;
+      color: var(--slate);
+    }
+
+    .promo-tag {
+      display: inline-block;
+      margin-top: 4px;
+      background: var(--clay-pale);
+      color: var(--clay);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 100px;
+    }
+
+    .price-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .price-now {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14.5px;
+    }
+
+    .price-before {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--slate);
+      text-decoration: line-through;
+    }
+
+    .ahorro {
+      font-size: 10.5px;
+      color: var(--verde-deep);
+      font-weight: 700;
+    }
+
+    /* ---------- badges de estado ---------- */
+    .badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 100px;
+    }
+
+    .badge.nuevo {
+      background: var(--verde-pale);
+      color: var(--verde-deep);
+    }
+
+    .badge.proceso {
+      background: #FDF1DA;
+      color: var(--mango-deep);
+    }
+
+    .badge.listo {
+      background: var(--verde-pale);
+      color: var(--verde-deep);
+    }
+
+    .badge.entregado {
+      background: var(--paper-2);
+      color: var(--slate);
+    }
+
+    /* ---------- toggle switch ---------- */
+    .switch {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #D8D0BE;
+      border-radius: 100px;
+      transition: .2s;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, .15);
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .3), 0 1px 0 rgba(255, 255, 255, .4) inset;
+    }
+
+    .switch input:checked+.slider {
+      background: linear-gradient(180deg, #3B9576, var(--verde-deep));
+    }
+
+    .switch input:checked+.slider::before {
+      transform: translateX(18px);
+    }
+
+    /* ---------- chat bubble sim ---------- */
+    .chat-window {
+      background: linear-gradient(165deg, #F2EADA, #E9DFC8);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      box-shadow: inset 0 2px 6px rgba(24, 36, 48, .08);
+    }
+
+    .bubble {
+      max-width: 82%;
+      padding: 9px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .bubble.in {
+      background: #fff;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 3px 8px -4px rgba(24, 36, 48, .25);
+    }
+
+    .bubble.out {
+      background: linear-gradient(180deg, #3B9576, var(--verde-deep));
+      color: #fff;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 10px -4px rgba(31, 89, 67, .55);
+    }
+
+    .chat-ch {
+      font-size: 10.5px;
+      color: var(--slate);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* ---------- bottom nav ---------- */
+    .bottomnav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, #fff, #FDFBF5);
+      border-top: 1px solid var(--line);
+      display: flex;
+      padding: 8px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -10px 22px -14px rgba(24, 36, 48, .35);
+      z-index: 10;
+    }
+
+    .navbtn {
+      flex: 1;
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 9.5px;
+      color: var(--slate);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 1px;
+      border-radius: 10px;
+      transition: transform .1s ease;
+      min-width: 0;
+    }
+
+    .navbtn:active {
+      transform: scale(0.94);
+    }
+
+    .navbtn.active {
+      color: var(--verde-deep);
+      background: var(--verde-pale);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+    }
+
+    .navbtn .ic {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ---------- toast ---------- */
+    .toast {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 78px;
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      z-index: 80;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, .3);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all .25s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--slate);
+      font-size: 13px;
+    }
+
+    .empty .em-mark {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    th {
+      text-align: left;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      color: var(--slate);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    td {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cart-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty button {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    ::selection {
+      background: var(--mango);
+      color: #3a2405;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="phone" id="phone">
-  <div class="notch"></div>
-  <div class="status"></div>
-  <div id="app"></div>
-</div>
+  <div class="phone" id="phone">
+    <div class="notch"></div>
+    <div class="status"></div>
+    <div id="app"></div>
+  </div>
 
-<script>
+  <script>
 
 
-/* =========================================================================
-   TENDIA — mini agente de IA para pequeños y medianos comercios
-   Conectado al backend real (Node + Express + Prisma) vía fetch().
-   ========================================================================= */
+    /* =========================================================================
+       TENDIA — mini agente de IA para pequeños y medianos comercios
+       Conectado al backend real (Node + Express + Prisma) vía fetch().
+       ========================================================================= */
 
-// Cambia esto por la URL de tu backend una vez lo despliegues
-// (ej: "https://tendia-backend.up.railway.app"). Mientras tanto apunta a
-// tu servidor local (npm run dev en la carpeta tendia-backend).
-const API_URL = "http://localhost:4000";
+    // Cambia esto por la URL de tu backend una vez lo despliegues
+    // (ej: "https://tendia-backend.up.railway.app"). Mientras tanto apunta a
+    // tu servidor local (npm run dev en la carpeta tendia-backend).
+    const API_URL = "https://tendia-backend.onrender.com";
 
-const LOGO_SVG = `
+    const LOGO_SVG = `
 <svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
@@ -361,78 +938,78 @@ const LOGO_SVG = `
   <path d="M47 12.5 L48.6 15.7 L51.8 17.3 L48.6 18.9 L47 22.1 L45.4 18.9 L42.2 17.3 L45.4 15.7 Z" fill="#F2A93B"/>
 </svg>`;
 
-// El backend maneja TODOS los montos en centavos de USD (ej: $3,50 = 350),
-// para evitar errores de redondeo. fmt() siempre recibe centavos.
-const fmt = (centavos) => "$" + (Number(centavos || 0) / 100).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtBs = (centimos) => "Bs. " + (Number(centimos || 0) / 100).toLocaleString("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const fmtDual = (centavosUsd, tasaBs) => tasaBs ? `${fmt(centavosUsd)} (≈ ${fmtBs(Math.round(centavosUsd * tasaBs))})` : fmt(centavosUsd);
-const $app = document.getElementById("app");
+    // El backend maneja TODOS los montos en centavos de USD (ej: $3,50 = 350),
+    // para evitar errores de redondeo. fmt() siempre recibe centavos.
+    const fmt = (centavos) => "$" + (Number(centavos || 0) / 100).toLocaleString("es-VE", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const fmtBs = (centimos) => "Bs. " + (Number(centimos || 0) / 100).toLocaleString("es-VE", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    const fmtDual = (centavosUsd, tasaBs) => tasaBs ? `${fmt(centavosUsd)} (≈ ${fmtBs(Math.round(centavosUsd * tasaBs))})` : fmt(centavosUsd);
+    const $app = document.getElementById("app");
 
-/* ---------------------- estado en memoria ---------------------- */
-const state = {
-  token: null,
-  usuario: null,       // {id, nombre, email, role, comercioId, telefono}
-  comercioInfo: null,  // {id, nombre, categoria} del negocio del comerciante logueado
-  role: null,           // 'comerciante' | 'cliente'
-  view: null,
-  authMode: "login",    // 'login' | 'registro' | 'recuperar-solicitar' | 'recuperar-cambiar'
-  registroRole: "COMERCIANTE",
-  recuperarEmail: null,
-  recuperarToken: null,
+    /* ---------------------- estado en memoria ---------------------- */
+    const state = {
+      token: null,
+      usuario: null,       // {id, nombre, email, role, comercioId, telefono}
+      comercioInfo: null,  // {id, nombre, categoria} del negocio del comerciante logueado
+      role: null,           // 'comerciante' | 'cliente'
+      view: null,
+      authMode: "login",    // 'login' | 'registro' | 'recuperar-solicitar' | 'recuperar-cambiar'
+      registroRole: "COMERCIANTE",
+      recuperarEmail: null,
+      recuperarToken: null,
 
-  // pago de un pedido
-  pedidoParaPagar: null,
-  metodoPagoElegido: null,
+      // pago de un pedido
+      pedidoParaPagar: null,
+      metodoPagoElegido: null,
 
-  // cliente
-  comercioActivo: null, // comercio que el cliente está explorando/comprando
-  carrito: [],
+      // cliente
+      comercioActivo: null, // comercio que el cliente está explorando/comprando
+      carrito: [],
 
-  // edición en curso (menú del comerciante)
-  mostrandoFormNuevoProducto: false,
-  editandoProductoId: null,
-  confirmarBorrarId: null,
-};
+      // edición en curso (menú del comerciante)
+      mostrandoFormNuevoProducto: false,
+      editandoProductoId: null,
+      confirmarBorrarId: null,
+    };
 
-function toast(msg) {
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.textContent = msg;
-  document.getElementById("phone").appendChild(t);
-  requestAnimationFrame(() => t.classList.add("show"));
-  setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 300); }, 3200);
-}
+    function toast(msg) {
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.textContent = msg;
+      document.getElementById("phone").appendChild(t);
+      requestAnimationFrame(() => t.classList.add("show"));
+      setTimeout(() => {t.classList.remove("show"); setTimeout(() => t.remove(), 300);}, 3200);
+    }
 
-/** Llama a la API real. Lanza un Error con el mensaje del backend si algo falla. */
-async function api(path, options = {}) {
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (state.token) headers.Authorization = `Bearer ${state.token}`;
-  let resp;
-  try {
-    resp = await fetch(`${API_URL}${path}`, { ...options, headers });
-  } catch (err) {
-    throw new Error(`No se pudo conectar con el backend (${API_URL}). ¿Está corriendo?`);
-  }
-  let data = null;
-  try { data = await resp.json(); } catch { /* respuestas sin cuerpo, ej. 204 */ }
-  if (!resp.ok) throw new Error(data?.error || `Error ${resp.status}`);
-  return data;
-}
+    /** Llama a la API real. Lanza un Error con el mensaje del backend si algo falla. */
+    async function api(path, options = {}) {
+      const headers = {"Content-Type": "application/json", ...(options.headers || {})};
+      if (state.token) headers.Authorization = `Bearer ${state.token}`;
+      let resp;
+      try {
+        resp = await fetch(`${API_URL}${path}`, {...options, headers});
+      } catch (err) {
+        throw new Error(`No se pudo conectar con el backend (${API_URL}). ¿Está corriendo?`);
+      }
+      let data = null;
+      try {data = await resp.json();} catch { /* respuestas sin cuerpo, ej. 204 */}
+      if (!resp.ok) throw new Error(data?.error || `Error ${resp.status}`);
+      return data;
+    }
 
-function cargando(msg = "Cargando…") {
-  return `<div class="empty"><div class="em-mark">⏳</div>${msg}</div>`;
-}
-function errorBox(msg) {
-  return `<div class="empty"><div class="em-mark">⚠️</div>${msg}</div>`;
-}
+    function cargando(msg = "Cargando…") {
+      return `<div class="empty"><div class="em-mark">⏳</div>${msg}</div>`;
+    }
+    function errorBox(msg) {
+      return `<div class="empty"><div class="em-mark">⚠️</div>${msg}</div>`;
+    }
 
-/* ============================== LOGIN / REGISTRO ============================== */
-function renderLogin() {
-  if (state.authMode === "recuperar-solicitar") return renderRecuperarSolicitar();
-  if (state.authMode === "recuperar-cambiar") return renderRecuperarCambiar();
+    /* ============================== LOGIN / REGISTRO ============================== */
+    function renderLogin() {
+      if (state.authMode === "recuperar-solicitar") return renderRecuperarSolicitar();
+      if (state.authMode === "recuperar-cambiar") return renderRecuperarCambiar();
 
-  const esRegistro = state.authMode === "registro";
-  $app.innerHTML = `
+      const esRegistro = state.authMode === "registro";
+      $app.innerHTML = `
     <div class="hero-login">
       <div class="hero-mark">${LOGO_SVG}</div>
       <div class="wordmark"><h1 style="font-size:26px;">Tendia</h1></div>
@@ -468,41 +1045,41 @@ function renderLogin() {
     </form>
   `;
 
-  $app.querySelectorAll(".role-toggle button[data-mode]").forEach((b) => {
-    b.onclick = () => { state.authMode = b.dataset.mode; renderLogin(); };
-  });
-  $app.querySelectorAll(".role-toggle button[data-rrole]").forEach((b) => {
-    b.onclick = () => { state.registroRole = b.dataset.rrole; renderLogin(); };
-  });
-  const olvideBtn = document.getElementById("olvideBtn");
-  if (olvideBtn) olvideBtn.onclick = () => { state.authMode = "recuperar-solicitar"; renderLogin(); };
+      $app.querySelectorAll(".role-toggle button[data-mode]").forEach((b) => {
+        b.onclick = () => {state.authMode = b.dataset.mode; renderLogin();};
+      });
+      $app.querySelectorAll(".role-toggle button[data-rrole]").forEach((b) => {
+        b.onclick = () => {state.registroRole = b.dataset.rrole; renderLogin();};
+      });
+      const olvideBtn = document.getElementById("olvideBtn");
+      if (olvideBtn) olvideBtn.onclick = () => {state.authMode = "recuperar-solicitar"; renderLogin();};
 
-  document.getElementById("authForm").onsubmit = async (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const boton = e.target.querySelector("button[type=submit]");
-    boton.disabled = true; boton.textContent = "Un momento…";
-    try {
-      let data;
-      if (esRegistro) {
-        const payload = { role: state.registroRole, nombre: fd.get("nombre"), email: fd.get("email"), password: fd.get("password") };
-        if (state.registroRole === "COMERCIANTE") { payload.comercioNombre = fd.get("comercioNombre"); payload.categoria = fd.get("categoria") || undefined; }
-        else { payload.telefono = fd.get("telefono") || undefined; }
-        data = await api("/api/auth/register", { method: "POST", body: JSON.stringify(payload) });
-      } else {
-        data = await api("/api/auth/login", { method: "POST", body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") }) });
-      }
-      await aplicarSesion(data);
-    } catch (err) {
-      toast(err.message);
-      boton.disabled = false; boton.textContent = esRegistro ? "Crear cuenta" : "Entrar";
+      document.getElementById("authForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const boton = e.target.querySelector("button[type=submit]");
+        boton.disabled = true; boton.textContent = "Un momento…";
+        try {
+          let data;
+          if (esRegistro) {
+            const payload = {role: state.registroRole, nombre: fd.get("nombre"), email: fd.get("email"), password: fd.get("password")};
+            if (state.registroRole === "COMERCIANTE") {payload.comercioNombre = fd.get("comercioNombre"); payload.categoria = fd.get("categoria") || undefined;}
+            else {payload.telefono = fd.get("telefono") || undefined;}
+            data = await api("/api/auth/register", {method: "POST", body: JSON.stringify(payload)});
+          } else {
+            data = await api("/api/auth/login", {method: "POST", body: JSON.stringify({email: fd.get("email"), password: fd.get("password")})});
+          }
+          await aplicarSesion(data);
+        } catch (err) {
+          toast(err.message);
+          boton.disabled = false; boton.textContent = esRegistro ? "Crear cuenta" : "Entrar";
+        }
+      };
     }
-  };
-}
 
-/* ---- Recuperar contraseña: paso 1, pedir el correo ---- */
-function renderRecuperarSolicitar() {
-  $app.innerHTML = `
+    /* ---- Recuperar contraseña: paso 1, pedir el correo ---- */
+    function renderRecuperarSolicitar() {
+      $app.innerHTML = `
     <div class="hero-login">
       <div class="hero-mark">${LOGO_SVG}</div>
       <div class="wordmark"><h1 style="font-size:22px;">Recuperar contraseña</h1></div>
@@ -514,37 +1091,37 @@ function renderRecuperarSolicitar() {
       <button type="button" class="link-btn" id="volverLoginBtn" style="margin-top:12px; width:100%; text-align:center;">‹ Volver a iniciar sesión</button>
     </form>
   `;
-  document.getElementById("volverLoginBtn").onclick = () => { state.authMode = "login"; renderLogin(); };
-  document.getElementById("recuperarForm").onsubmit = async (e) => {
-    e.preventDefault();
-    const email = new FormData(e.target).get("email");
-    const boton = e.target.querySelector("button[type=submit]");
-    boton.disabled = true; boton.textContent = "Enviando…";
-    try {
-      const data = await api("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) });
-      state.recuperarEmail = email;
-      if (data.modoSimulacion && data.resetToken) {
-        // Sin servidor de correo configurado todavía: seguimos directo al
-        // cambio de contraseña con el token que el backend nos devolvió.
-        state.recuperarToken = data.resetToken;
-        toast("Modo de prueba: sin correo configurado, seguimos directo al cambio de clave.");
-      } else {
-        state.recuperarToken = null;
-        toast("Si el correo existe, te llegó un enlace para cambiar tu contraseña.");
-      }
-      state.authMode = "recuperar-cambiar";
-      renderLogin();
-    } catch (err) {
-      toast(err.message);
-      boton.disabled = false; boton.textContent = "Enviar enlace de recuperación";
+      document.getElementById("volverLoginBtn").onclick = () => {state.authMode = "login"; renderLogin();};
+      document.getElementById("recuperarForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const email = new FormData(e.target).get("email");
+        const boton = e.target.querySelector("button[type=submit]");
+        boton.disabled = true; boton.textContent = "Enviando…";
+        try {
+          const data = await api("/api/auth/forgot-password", {method: "POST", body: JSON.stringify({email})});
+          state.recuperarEmail = email;
+          if (data.modoSimulacion && data.resetToken) {
+            // Sin servidor de correo configurado todavía: seguimos directo al
+            // cambio de contraseña con el token que el backend nos devolvió.
+            state.recuperarToken = data.resetToken;
+            toast("Modo de prueba: sin correo configurado, seguimos directo al cambio de clave.");
+          } else {
+            state.recuperarToken = null;
+            toast("Si el correo existe, te llegó un enlace para cambiar tu contraseña.");
+          }
+          state.authMode = "recuperar-cambiar";
+          renderLogin();
+        } catch (err) {
+          toast(err.message);
+          boton.disabled = false; boton.textContent = "Enviar enlace de recuperación";
+        }
+      };
     }
-  };
-}
 
-/* ---- Recuperar contraseña: paso 2, definir la nueva ---- */
-function renderRecuperarCambiar() {
-  const tokenConocido = !!state.recuperarToken;
-  $app.innerHTML = `
+    /* ---- Recuperar contraseña: paso 2, definir la nueva ---- */
+    function renderRecuperarCambiar() {
+      const tokenConocido = !!state.recuperarToken;
+      $app.innerHTML = `
     <div class="hero-login">
       <div class="hero-mark">${LOGO_SVG}</div>
       <div class="wordmark"><h1 style="font-size:22px;">Nueva contraseña</h1></div>
@@ -557,58 +1134,58 @@ function renderRecuperarCambiar() {
       <button type="button" class="link-btn" id="volverLoginBtn2" style="margin-top:12px; width:100%; text-align:center;">‹ Volver a iniciar sesión</button>
     </form>
   `;
-  document.getElementById("volverLoginBtn2").onclick = () => { state.authMode = "login"; state.recuperarToken = null; renderLogin(); };
-  document.getElementById("cambiarForm").onsubmit = async (e) => {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const token = state.recuperarToken || fd.get("token");
-    const boton = e.target.querySelector("button[type=submit]");
-    boton.disabled = true; boton.textContent = "Cambiando…";
-    try {
-      const data = await api("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password: fd.get("password") }) });
-      state.recuperarToken = null; state.recuperarEmail = null;
-      toast("Contraseña actualizada. ¡Ya entraste con la nueva!");
-      await aplicarSesion(data);
-    } catch (err) {
-      toast(err.message);
-      boton.disabled = false; boton.textContent = "Cambiar contraseña";
+      document.getElementById("volverLoginBtn2").onclick = () => {state.authMode = "login"; state.recuperarToken = null; renderLogin();};
+      document.getElementById("cambiarForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const token = state.recuperarToken || fd.get("token");
+        const boton = e.target.querySelector("button[type=submit]");
+        boton.disabled = true; boton.textContent = "Cambiando…";
+        try {
+          const data = await api("/api/auth/reset-password", {method: "POST", body: JSON.stringify({token, password: fd.get("password")})});
+          state.recuperarToken = null; state.recuperarEmail = null;
+          toast("Contraseña actualizada. ¡Ya entraste con la nueva!");
+          await aplicarSesion(data);
+        } catch (err) {
+          toast(err.message);
+          boton.disabled = false; boton.textContent = "Cambiar contraseña";
+        }
+      };
     }
-  };
-}
 
-async function aplicarSesion(data) {
-  state.token = data.token;
-  state.usuario = data.usuario;
-  state.role = data.usuario.role.toLowerCase();
-  if (state.role === "comerciante") {
-    try {
-      const dir = await api("/api/comercios/publico");
-      state.comercioInfo = dir.comercios.find((c) => c.id === state.usuario.comercioId) || { nombre: "Tu negocio", categoria: "" };
-    } catch { state.comercioInfo = { nombre: "Tu negocio", categoria: "" }; }
-    state.view = "dashboard";
-  } else {
-    state.view = "explorar";
-  }
-  render();
-}
+    async function aplicarSesion(data) {
+      state.token = data.token;
+      state.usuario = data.usuario;
+      state.role = data.usuario.role.toLowerCase();
+      if (state.role === "comerciante") {
+        try {
+          const dir = await api("/api/comercios/publico");
+          state.comercioInfo = dir.comercios.find((c) => c.id === state.usuario.comercioId) || {nombre: "Tu negocio", categoria: ""};
+        } catch {state.comercioInfo = {nombre: "Tu negocio", categoria: ""};}
+        state.view = "dashboard";
+      } else {
+        state.view = "explorar";
+      }
+      render();
+    }
 
-function cerrarSesion() {
-  state.token = null; state.usuario = null; state.comercioInfo = null; state.role = null;
-  state.comercioActivo = null; state.carrito = [];
-  state.authMode = "login"; state.recuperarToken = null; state.recuperarEmail = null;
-  renderLogin();
-}
+    function cerrarSesion() {
+      state.token = null; state.usuario = null; state.comercioInfo = null; state.role = null;
+      state.comercioActivo = null; state.carrito = [];
+      state.authMode = "login"; state.recuperarToken = null; state.recuperarEmail = null;
+      renderLogin();
+    }
 
-/* ============================== SHELL ============================== */
-function shell(innerHTML, navItems, activeView) {
-  const nombreArriba = state.role === "comerciante" ? (state.comercioInfo?.nombre || "Tu negocio") : state.usuario.nombre;
-  const subArriba = state.role === "comerciante"
-    ? (state.comercioInfo?.categoria || "Panel de comerciante")
-    : (state.comercioActivo ? `Comprando en ${state.comercioActivo.nombre}` : "Cliente Tendia");
-  const inicial = (nombreArriba || "T")[0].toUpperCase();
-  const logoComercio = state.role === "comerciante" ? state.comercioInfo?.logo : null;
+    /* ============================== SHELL ============================== */
+    function shell(innerHTML, navItems, activeView) {
+      const nombreArriba = state.role === "comerciante" ? (state.comercioInfo?.nombre || "Tu negocio") : state.usuario.nombre;
+      const subArriba = state.role === "comerciante"
+        ? (state.comercioInfo?.categoria || "Panel de comerciante")
+        : (state.comercioActivo ? `Comprando en ${state.comercioActivo.nombre}` : "Cliente Tendia");
+      const inicial = (nombreArriba || "T")[0].toUpperCase();
+      const logoComercio = state.role === "comerciante" ? state.comercioInfo?.logo : null;
 
-  return `
+      return `
     <div class="topbar">
       <div class="brand">
         <div class="brand-mark">${logoComercio ? `<img src="${logoComercio}" alt="">` : inicial}</div>
@@ -628,53 +1205,53 @@ function shell(innerHTML, navItems, activeView) {
         </button>`).join("")}
     </div>
   `;
-}
+    }
 
-function bindShell() {
-  document.getElementById("logoutBtn").onclick = cerrarSesion;
-  document.querySelectorAll(".navbtn").forEach((b) => {
-    b.onclick = () => { state.view = b.dataset.view; render(); };
-  });
-}
+    function bindShell() {
+      document.getElementById("logoutBtn").onclick = cerrarSesion;
+      document.querySelectorAll(".navbtn").forEach((b) => {
+        b.onclick = () => {state.view = b.dataset.view; render();};
+      });
+    }
 
-const NAV_COMERCIANTE = [
-  { id: "dashboard", icon: "📊", label: "Inicio" },
-  { id: "menu", icon: "🥐", label: "Menú" },
-  { id: "clientes", icon: "👥", label: "Clientes" },
-  { id: "pedidos", icon: "🧾", label: "Pedidos" },
-  { id: "cobros", icon: "💵", label: "Cobros" },
-  { id: "bot", icon: "🤖", label: "Agente" },
-];
-const NAV_CLIENTE = [
-  { id: "explorar", icon: "🛍️", label: "Explorar" },
-  { id: "carrito", icon: "🧺", label: "Pedido" },
-  { id: "compras", icon: "📈", label: "Mis compras" },
-  { id: "estado", icon: "📦", label: "Estado" },
-];
+    const NAV_COMERCIANTE = [
+      {id: "dashboard", icon: "📊", label: "Inicio"},
+      {id: "menu", icon: "🥐", label: "Menú"},
+      {id: "clientes", icon: "👥", label: "Clientes"},
+      {id: "pedidos", icon: "🧾", label: "Pedidos"},
+      {id: "cobros", icon: "💵", label: "Cobros"},
+      {id: "bot", icon: "🤖", label: "Agente"},
+    ];
+    const NAV_CLIENTE = [
+      {id: "explorar", icon: "🛍️", label: "Explorar"},
+      {id: "carrito", icon: "🧺", label: "Pedido"},
+      {id: "compras", icon: "📈", label: "Mis compras"},
+      {id: "estado", icon: "📦", label: "Estado"},
+    ];
 
-/* ======================= COMERCIANTE: DASHBOARD ======================= */
-async function viewDashboard() {
-  $app.innerHTML = shell(cargando("Calculando tus números…"), NAV_COMERCIANTE, "dashboard");
-  bindShell();
-  try {
-    const [pedidosData, productosData] = await Promise.all([api("/api/pedidos"), api("/api/productos")]);
-    const pedidos = pedidosData.pedidos;
-    const activos = pedidos.filter((p) => ["nuevo", "proceso", "listo"].includes(p.estado));
-    const entregados = pedidos.filter((p) => p.estado === "entregado");
-    const ventasTotal = entregados.reduce((a, p) => a + p.total, 0);
-    const ticketProm = entregados.length ? Math.round(ventasTotal / entregados.length) : 0;
+    /* ======================= COMERCIANTE: DASHBOARD ======================= */
+    async function viewDashboard() {
+      $app.innerHTML = shell(cargando("Calculando tus números…"), NAV_COMERCIANTE, "dashboard");
+      bindShell();
+      try {
+        const [pedidosData, productosData] = await Promise.all([api("/api/pedidos"), api("/api/productos")]);
+        const pedidos = pedidosData.pedidos;
+        const activos = pedidos.filter((p) => ["nuevo", "proceso", "listo"].includes(p.estado));
+        const entregados = pedidos.filter((p) => p.estado === "entregado");
+        const ventasTotal = entregados.reduce((a, p) => a + p.total, 0);
+        const ticketProm = entregados.length ? Math.round(ventasTotal / entregados.length) : 0;
 
-    const porDia = {};
-    entregados.forEach((p) => { const dia = p.createdAt.slice(0, 10); porDia[dia] = (porDia[dia] || 0) + p.total; });
-    const dias = Object.keys(porDia).sort().slice(-7);
+        const porDia = {};
+        entregados.forEach((p) => {const dia = p.createdAt.slice(0, 10); porDia[dia] = (porDia[dia] || 0) + p.total;});
+        const dias = Object.keys(porDia).sort().slice(-7);
 
-    const conteoProductos = {};
-    pedidos.forEach((p) => {
-      JSON.parse(p.items).forEach((it) => { conteoProductos[it.nombre] = (conteoProductos[it.nombre] || 0) + it.cantidad; });
-    });
-    const topProducto = Object.entries(conteoProductos).sort((a, b) => b[1] - a[1])[0];
+        const conteoProductos = {};
+        pedidos.forEach((p) => {
+          JSON.parse(p.items).forEach((it) => {conteoProductos[it.nombre] = (conteoProductos[it.nombre] || 0) + it.cantidad;});
+        });
+        const topProducto = Object.entries(conteoProductos).sort((a, b) => b[1] - a[1])[0];
 
-    const html = `
+        const html = `
       <div class="eyebrow">Resumen de tu negocio</div>
       <h2 style="font-size:20px;">Cómo va tu negocio</h2>
 
@@ -709,7 +1286,7 @@ async function viewDashboard() {
         ${activos.length === 0 ? `<p class="muted" style="padding:12px 0;">No tienes pedidos pendientes ahora mismo 🎉</p>` : activos.map((p) => `
           <div class="row" style="padding:11px 0; border-bottom:1px solid var(--line);">
             <div><div style="font-weight:700; font-size:13.5px;">${JSON.parse(p.items).map((i) => i.nombre).join(", ")}</div><div class="muted">${p.canal} · ${fmt(p.total)}</div></div>
-            <span class="badge ${p.estado}">${({ nuevo: "Nuevo", proceso: "En proceso", listo: "Listo" })[p.estado]}</span>
+            <span class="badge ${p.estado}">${({nuevo: "Nuevo", proceso: "En proceso", listo: "Listo"})[p.estado]}</span>
           </div>`).join("")}
       </div>
 
@@ -723,78 +1300,78 @@ async function viewDashboard() {
         </div>
       ` : ""}
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "dashboard");
-    bindShell();
-    const goto = $app.querySelector('[data-goto="pedidos"]');
-    if (goto) goto.onclick = () => { state.view = "pedidos"; render(); };
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "dashboard");
+        bindShell();
+        const goto = $app.querySelector('[data-goto="pedidos"]');
+        if (goto) goto.onclick = () => {state.view = "pedidos"; render();};
 
-    document.getElementById("logoInput").onchange = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (!["image/jpeg", "image/png"].includes(file.type)) { toast("Solo se aceptan imágenes JPG o PNG."); return; }
-      if (file.size > 1.5 * 1024 * 1024) { toast("La imagen es muy pesada (máximo ~1.5MB)."); return; }
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const data = await api("/api/comercios/logo", { method: "PUT", body: JSON.stringify({ logo: reader.result }) });
-          state.comercioInfo.logo = data.logo;
-          toast("Logo actualizado.");
-          viewDashboard();
-        } catch (err) { toast(err.message); }
-      };
-      reader.readAsDataURL(file);
-    };
+        document.getElementById("logoInput").onchange = async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          if (!["image/jpeg", "image/png"].includes(file.type)) {toast("Solo se aceptan imágenes JPG o PNG."); return;}
+          if (file.size > 1.5 * 1024 * 1024) {toast("La imagen es muy pesada (máximo ~1.5MB)."); return;}
+          const reader = new FileReader();
+          reader.onload = async () => {
+            try {
+              const data = await api("/api/comercios/logo", {method: "PUT", body: JSON.stringify({logo: reader.result})});
+              state.comercioInfo.logo = data.logo;
+              toast("Logo actualizado.");
+              viewDashboard();
+            } catch (err) {toast(err.message);}
+          };
+          reader.readAsDataURL(file);
+        };
 
-    if (dias.length) {
-      new Chart(document.getElementById("ventasChart"), {
-        type: "bar",
-        data: { labels: dias.map((d) => d.slice(5)), datasets: [{ data: dias.map((d) => porDia[d]), backgroundColor: "#2F7A5E", borderRadius: 6, maxBarThickness: 26 }] },
-        options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } }, responsive: true, maintainAspectRatio: false },
-      });
+        if (dias.length) {
+          new Chart(document.getElementById("ventasChart"), {
+            type: "bar",
+            data: {labels: dias.map((d) => d.slice(5)), datasets: [{data: dias.map((d) => porDia[d]), backgroundColor: "#2F7A5E", borderRadius: 6, maxBarThickness: 26}]},
+            options: {plugins: {legend: {display: false}}, scales: {y: {display: false}, x: {grid: {display: false}}}, responsive: true, maintainAspectRatio: false},
+          });
+        }
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "dashboard");
+        bindShell();
+      }
     }
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "dashboard");
-    bindShell();
-  }
-}
 
-/* ======================= COMERCIANTE: MENÚ ======================= */
-/** Convierte un <input type=file> en un selector con vista previa que
- *  guarda la imagen en base64 dentro de un <input type=hidden>. Valida
- *  formato (JPG/PNG) y tamaño (máx ~1.5MB) antes de leer el archivo. */
-function bindImagePicker(labelEl) {
-  const fileInputEl = labelEl.querySelector("input[type=file]");
-  const hiddenInputEl = document.getElementById(fileInputEl.dataset.hiddenId);
-  fileInputEl.onchange = () => {
-    const file = fileInputEl.files[0];
-    if (!file) return;
-    if (!["image/jpeg", "image/png"].includes(file.type)) { toast("Solo se aceptan imágenes JPG o PNG."); fileInputEl.value = ""; return; }
-    if (file.size > 1.5 * 1024 * 1024) { toast("La imagen es muy pesada (máximo ~1.5MB)."); fileInputEl.value = ""; return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      hiddenInputEl.value = reader.result;
-      labelEl.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = reader.result;
-      labelEl.appendChild(img);
-      labelEl.appendChild(fileInputEl);
-      labelEl.classList.add("tiene-imagen");
-    };
-    reader.readAsDataURL(file);
-  };
-}
+    /* ======================= COMERCIANTE: MENÚ ======================= */
+    /** Convierte un <input type=file> en un selector con vista previa que
+     *  guarda la imagen en base64 dentro de un <input type=hidden>. Valida
+     *  formato (JPG/PNG) y tamaño (máx ~1.5MB) antes de leer el archivo. */
+    function bindImagePicker(labelEl) {
+      const fileInputEl = labelEl.querySelector("input[type=file]");
+      const hiddenInputEl = document.getElementById(fileInputEl.dataset.hiddenId);
+      fileInputEl.onchange = () => {
+        const file = fileInputEl.files[0];
+        if (!file) return;
+        if (!["image/jpeg", "image/png"].includes(file.type)) {toast("Solo se aceptan imágenes JPG o PNG."); fileInputEl.value = ""; return;}
+        if (file.size > 1.5 * 1024 * 1024) {toast("La imagen es muy pesada (máximo ~1.5MB)."); fileInputEl.value = ""; return;}
+        const reader = new FileReader();
+        reader.onload = () => {
+          hiddenInputEl.value = reader.result;
+          labelEl.innerHTML = "";
+          const img = document.createElement("img");
+          img.src = reader.result;
+          labelEl.appendChild(img);
+          labelEl.appendChild(fileInputEl);
+          labelEl.classList.add("tiene-imagen");
+        };
+        reader.readAsDataURL(file);
+      };
+    }
 
-function thumbProducto(p) {
-  if (p.imagen1) return `<img src="${p.imagen1}" alt="${p.nombre}">`;
-  return p.categoria === "Repostería" ? "🎂" : p.categoria === "Combos" ? "🥐" : p.categoria === "Salado" ? "🥟" : "🍞";
-}
+    function thumbProducto(p) {
+      if (p.imagen1) return `<img src="${p.imagen1}" alt="${p.nombre}">`;
+      return p.categoria === "Repostería" ? "🎂" : p.categoria === "Combos" ? "🥐" : p.categoria === "Salado" ? "🥟" : "🍞";
+    }
 
-async function viewMenu() {
-  $app.innerHTML = shell(cargando("Cargando tu catálogo…"), NAV_COMERCIANTE, "menu");
-  bindShell();
-  try {
-    const { productos } = await api("/api/productos");
-    const html = `
+    async function viewMenu() {
+      $app.innerHTML = shell(cargando("Cargando tu catálogo…"), NAV_COMERCIANTE, "menu");
+      bindShell();
+      try {
+        const {productos} = await api("/api/productos");
+        const html = `
       <div class="eyebrow">Tu vitrina</div>
       <div class="row">
         <h2 style="font-size:20px;">Menú del negocio</h2>
@@ -866,69 +1443,71 @@ async function viewMenu() {
         `).join("")}
       </div>
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "menu");
-    bindShell();
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "menu");
+        bindShell();
 
-    document.getElementById("addProdBtn").onclick = () => { state.mostrandoFormNuevoProducto = !state.mostrandoFormNuevoProducto; viewMenu(); };
+        document.getElementById("addProdBtn").onclick = () => {state.mostrandoFormNuevoProducto = !state.mostrandoFormNuevoProducto; viewMenu();};
 
-    $app.querySelectorAll(".img-picker label").forEach(bindImagePicker);
+        $app.querySelectorAll(".img-picker label").forEach(bindImagePicker);
 
-    const nuevoForm = document.getElementById("nuevoProdForm");
-    if (nuevoForm) nuevoForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
+        const nuevoForm = document.getElementById("nuevoProdForm");
+        if (nuevoForm) nuevoForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          try {
+            await api("/api/productos", {
+              method: "POST", body: JSON.stringify({
+                nombre: fd.get("nombre"), categoria: fd.get("categoria") || undefined,
+                precio: Math.round(Number(fd.get("precio")) * 100), precioAntes: fd.get("precioAntes") ? Math.round(Number(fd.get("precioAntes")) * 100) : undefined,
+                promo: fd.get("promo") || undefined, stock: fd.get("stock") ? Number(fd.get("stock")) : 0,
+                imagen1: fd.get("imagen1") || undefined, imagen2: fd.get("imagen2") || undefined,
+              })
+            });
+            toast("Producto creado.");
+            state.mostrandoFormNuevoProducto = false;
+            viewMenu();
+          } catch (err) {toast(err.message);}
+        };
+
+        $app.querySelectorAll("[data-editar]").forEach((b) => b.onclick = () => {state.editandoProductoId = b.dataset.editar; viewMenu();});
+        $app.querySelectorAll("[data-canceleditar]").forEach((b) => b.onclick = () => {state.editandoProductoId = null; viewMenu();});
+        $app.querySelectorAll("[data-editform]").forEach((f) => f.onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          try {
+            const payload = {precio: Math.round(Number(fd.get("precio")) * 100), stock: Number(fd.get("stock"))};
+            if (fd.get("imagen1")) payload.imagen1 = fd.get("imagen1");
+            if (fd.get("imagen2")) payload.imagen2 = fd.get("imagen2");
+            await api(`/api/productos/${f.dataset.editform}`, {method: "PUT", body: JSON.stringify(payload)});
+            toast("Producto actualizado.");
+            state.editandoProductoId = null;
+            viewMenu();
+          } catch (err) {toast(err.message);}
+        });
+
+        $app.querySelectorAll("[data-borrar]").forEach((b) => b.onclick = async () => {
+          if (state.confirmarBorrarId !== b.dataset.borrar) {state.confirmarBorrarId = b.dataset.borrar; viewMenu(); return;}
+          try {
+            await api(`/api/productos/${b.dataset.borrar}`, {method: "DELETE"});
+            toast("Producto borrado.");
+            state.confirmarBorrarId = null;
+            viewMenu();
+          } catch (err) {toast(err.message);}
+        });
+        $app.querySelectorAll("[data-cancelborrar]").forEach((b) => b.onclick = () => {state.confirmarBorrarId = null; viewMenu();});
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "menu");
+        bindShell();
+      }
+    }
+
+    /* ======================= COMERCIANTE: CRM ======================= */
+    async function viewCRM() {
+      $app.innerHTML = shell(cargando("Cargando tu CRM…"), NAV_COMERCIANTE, "clientes");
+      bindShell();
       try {
-        await api("/api/productos", { method: "POST", body: JSON.stringify({
-          nombre: fd.get("nombre"), categoria: fd.get("categoria") || undefined,
-          precio: Math.round(Number(fd.get("precio")) * 100), precioAntes: fd.get("precioAntes") ? Math.round(Number(fd.get("precioAntes")) * 100) : undefined,
-          promo: fd.get("promo") || undefined, stock: fd.get("stock") ? Number(fd.get("stock")) : 0,
-          imagen1: fd.get("imagen1") || undefined, imagen2: fd.get("imagen2") || undefined,
-        }) });
-        toast("Producto creado.");
-        state.mostrandoFormNuevoProducto = false;
-        viewMenu();
-      } catch (err) { toast(err.message); }
-    };
-
-    $app.querySelectorAll("[data-editar]").forEach((b) => b.onclick = () => { state.editandoProductoId = b.dataset.editar; viewMenu(); });
-    $app.querySelectorAll("[data-canceleditar]").forEach((b) => b.onclick = () => { state.editandoProductoId = null; viewMenu(); });
-    $app.querySelectorAll("[data-editform]").forEach((f) => f.onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      try {
-        const payload = { precio: Math.round(Number(fd.get("precio")) * 100), stock: Number(fd.get("stock")) };
-        if (fd.get("imagen1")) payload.imagen1 = fd.get("imagen1");
-        if (fd.get("imagen2")) payload.imagen2 = fd.get("imagen2");
-        await api(`/api/productos/${f.dataset.editform}`, { method: "PUT", body: JSON.stringify(payload) });
-        toast("Producto actualizado.");
-        state.editandoProductoId = null;
-        viewMenu();
-      } catch (err) { toast(err.message); }
-    });
-
-    $app.querySelectorAll("[data-borrar]").forEach((b) => b.onclick = async () => {
-      if (state.confirmarBorrarId !== b.dataset.borrar) { state.confirmarBorrarId = b.dataset.borrar; viewMenu(); return; }
-      try {
-        await api(`/api/productos/${b.dataset.borrar}`, { method: "DELETE" });
-        toast("Producto borrado.");
-        state.confirmarBorrarId = null;
-        viewMenu();
-      } catch (err) { toast(err.message); }
-    });
-    $app.querySelectorAll("[data-cancelborrar]").forEach((b) => b.onclick = () => { state.confirmarBorrarId = null; viewMenu(); });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "menu");
-    bindShell();
-  }
-}
-
-/* ======================= COMERCIANTE: CRM ======================= */
-async function viewCRM() {
-  $app.innerHTML = shell(cargando("Cargando tu CRM…"), NAV_COMERCIANTE, "clientes");
-  bindShell();
-  try {
-    const { clientes } = await api("/api/clientes");
-    const html = `
+        const {clientes} = await api("/api/clientes");
+        const html = `
       <div class="eyebrow">Base de datos de clientes</div>
       <div class="row">
         <h2 style="font-size:20px;">Tu mini CRM</h2>
@@ -960,24 +1539,24 @@ async function viewCRM() {
       </div>
       <div id="cliDetail"></div>
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "clientes");
-    bindShell();
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "clientes");
+        bindShell();
 
-    document.getElementById("exportBtn").onclick = exportarCRM;
-    document.getElementById("vincularForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      try {
-        await api("/api/clientes", { method: "POST", body: JSON.stringify({ email: fd.get("email") }) });
-        toast("Cliente vinculado.");
-        viewCRM();
-      } catch (err) { toast(err.message); }
-    };
-    $app.querySelectorAll("[data-cli]").forEach((b) => b.onclick = async () => {
-      try {
-        const { pedidos } = await api(`/api/clientes/${b.dataset.cli}/historial`);
-        const cliente = clientes.find((c) => c.id === b.dataset.cli);
-        document.getElementById("cliDetail").innerHTML = `
+        document.getElementById("exportBtn").onclick = exportarCRM;
+        document.getElementById("vincularForm").onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          try {
+            await api("/api/clientes", {method: "POST", body: JSON.stringify({email: fd.get("email")})});
+            toast("Cliente vinculado.");
+            viewCRM();
+          } catch (err) {toast(err.message);}
+        };
+        $app.querySelectorAll("[data-cli]").forEach((b) => b.onclick = async () => {
+          try {
+            const {pedidos} = await api(`/api/clientes/${b.dataset.cli}/historial`);
+            const cliente = clientes.find((c) => c.id === b.dataset.cli);
+            document.getElementById("cliDetail").innerHTML = `
           <div class="section-title"><h2>Historial · ${cliente.nombre}</h2></div>
           <div class="card">
             ${pedidos.length === 0 ? `<p class="muted">Sin compras registradas todavía.</p>` : pedidos.map((p) => `
@@ -986,42 +1565,42 @@ async function viewCRM() {
                 <div class="price-now">${fmt(p.total)}</div>
               </div>`).join("")}
           </div>`;
-      } catch (err) { toast(err.message); }
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "clientes");
-    bindShell();
-  }
-}
+          } catch (err) {toast(err.message);}
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "clientes");
+        bindShell();
+      }
+    }
 
-async function exportarCRM() {
-  try {
-    const resp = await fetch(`${API_URL}/api/clientes/export/csv`, { headers: { Authorization: `Bearer ${state.token}` } });
-    if (!resp.ok) throw new Error("No se pudo exportar el CRM.");
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "clientes_tendia.csv";
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-    toast("CSV descargado con tu base de clientes real.");
-  } catch (err) { toast(err.message); }
-}
+    async function exportarCRM() {
+      try {
+        const resp = await fetch(`${API_URL}/api/clientes/export/csv`, {headers: {Authorization: `Bearer ${state.token}`}});
+        if (!resp.ok) throw new Error("No se pudo exportar el CRM.");
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "clientes_tendia.csv";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        toast("CSV descargado con tu base de clientes real.");
+      } catch (err) {toast(err.message);}
+    }
 
-/* ======================= COMERCIANTE: PEDIDOS ======================= */
-const SIGUIENTE_ESTADO = { nuevo: "proceso", proceso: "listo", listo: "entregado" };
-const ETIQUETA_ESTADO = { nuevo: "Nuevo", proceso: "En proceso", listo: "Listo", entregado: "Entregado", cancelado: "Cancelado" };
-const ETIQUETA_PAGO = { pendiente: "Pago pendiente", por_verificar: "Pago por verificar", pagado: "Pagado", rechazado: "Pago rechazado", reembolso_pendiente: "Reembolso pendiente", reembolsado: "Reembolsado" };
-const CLASE_PAGO = { pendiente: "proceso", por_verificar: "proceso", pagado: "listo", rechazado: "cancelado", reembolso_pendiente: "proceso", reembolsado: "entregado" };
+    /* ======================= COMERCIANTE: PEDIDOS ======================= */
+    const SIGUIENTE_ESTADO = {nuevo: "proceso", proceso: "listo", listo: "entregado"};
+    const ETIQUETA_ESTADO = {nuevo: "Nuevo", proceso: "En proceso", listo: "Listo", entregado: "Entregado", cancelado: "Cancelado"};
+    const ETIQUETA_PAGO = {pendiente: "Pago pendiente", por_verificar: "Pago por verificar", pagado: "Pagado", rechazado: "Pago rechazado", reembolso_pendiente: "Reembolso pendiente", reembolsado: "Reembolsado"};
+    const CLASE_PAGO = {pendiente: "proceso", por_verificar: "proceso", pagado: "listo", rechazado: "cancelado", reembolso_pendiente: "proceso", reembolsado: "entregado"};
 
-async function viewPedidos() {
-  $app.innerHTML = shell(cargando("Cargando pedidos…"), NAV_COMERCIANTE, "pedidos");
-  bindShell();
-  try {
-    const { pedidos } = await api("/api/pedidos");
-    const orden = { nuevo: 0, proceso: 1, listo: 2, entregado: 3, cancelado: 4 };
-    const lista = [...pedidos].sort((a, b) => orden[a.estado] - orden[b.estado]);
-    const html = `
+    async function viewPedidos() {
+      $app.innerHTML = shell(cargando("Cargando pedidos…"), NAV_COMERCIANTE, "pedidos");
+      bindShell();
+      try {
+        const {pedidos} = await api("/api/pedidos");
+        const orden = {nuevo: 0, proceso: 1, listo: 2, entregado: 3, cancelado: 4};
+        const lista = [...pedidos].sort((a, b) => orden[a.estado] - orden[b.estado]);
+        const html = `
       <div class="eyebrow">En curso</div>
       <h2 style="font-size:20px;">Pedidos y órdenes</h2>
       <div class="card" style="padding:6px 16px;">
@@ -1043,28 +1622,28 @@ async function viewPedidos() {
           </div>`).join("")}
       </div>
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "pedidos");
-    bindShell();
-    $app.querySelectorAll("[data-avanzar]").forEach((b) => b.onclick = async () => {
-      try {
-        await api(`/api/pedidos/${b.dataset.avanzar}/estado`, { method: "PATCH", body: JSON.stringify({ estado: b.dataset.nuevoestado }) });
-        toast("Pedido actualizado.");
-        viewPedidos();
-      } catch (err) { toast(err.message); }
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "pedidos");
-    bindShell();
-  }
-}
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "pedidos");
+        bindShell();
+        $app.querySelectorAll("[data-avanzar]").forEach((b) => b.onclick = async () => {
+          try {
+            await api(`/api/pedidos/${b.dataset.avanzar}/estado`, {method: "PATCH", body: JSON.stringify({estado: b.dataset.nuevoestado})});
+            toast("Pedido actualizado.");
+            viewPedidos();
+          } catch (err) {toast(err.message);}
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "pedidos");
+        bindShell();
+      }
+    }
 
-/* ======================= COMERCIANTE: AGENTE / CANALES ======================= */
-async function viewBot() {
-  $app.innerHTML = shell(cargando("Cargando configuración del agente…"), NAV_COMERCIANTE, "bot");
-  bindShell();
-  try {
-    const canales = await api("/api/comercios/canales");
-    const html = `
+    /* ======================= COMERCIANTE: AGENTE / CANALES ======================= */
+    async function viewBot() {
+      $app.innerHTML = shell(cargando("Cargando configuración del agente…"), NAV_COMERCIANTE, "bot");
+      bindShell();
+      try {
+        const canales = await api("/api/comercios/canales");
+        const html = `
       <div class="eyebrow">Agente de IA</div>
       <h2 style="font-size:20px;">Atención automática</h2>
       <p class="muted">Tu agente responde pedidos, muestra el menú y confirma pagos en cada canal, sin que tengas que estar en el teléfono.</p>
@@ -1099,36 +1678,36 @@ async function viewBot() {
       </div>
       <p class="muted" style="margin-top:12px;">Esta conversación de ejemplo ilustra el flujo; tu agente real ya está corriendo en el backend (webhooks de WhatsApp/Instagram) y responde con tu catálogo real en cuanto conectes los IDs de arriba.</p>
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "bot");
-    bindShell();
-    $app.querySelectorAll("[data-canal]").forEach((f) => f.onsubmit = async (e) => {
-      e.preventDefault();
-      const valor = new FormData(e.target).get("valor").trim();
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "bot");
+        bindShell();
+        $app.querySelectorAll("[data-canal]").forEach((f) => f.onsubmit = async (e) => {
+          e.preventDefault();
+          const valor = new FormData(e.target).get("valor").trim();
+          try {
+            await api("/api/comercios/canales", {method: "PUT", body: JSON.stringify({[f.dataset.canal]: valor || null})});
+            toast("Canal actualizado.");
+            viewBot();
+          } catch (err) {toast(err.message);}
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "bot");
+        bindShell();
+      }
+    }
+
+    /* ======================= CLIENTE: EXPLORAR ======================= */
+    /* ======================= COMERCIANTE: COBROS ======================= */
+    const NOMBRE_METODO = {pago_movil: "Pago Móvil", zelle: "Zelle", binance: "Binance Pay (USDT)"};
+
+    async function viewCobros() {
+      $app.innerHTML = shell(cargando("Cargando tus cobros…"), NAV_COMERCIANTE, "cobros");
+      bindShell();
       try {
-        await api("/api/comercios/canales", { method: "PUT", body: JSON.stringify({ [f.dataset.canal]: valor || null }) });
-        toast("Canal actualizado.");
-        viewBot();
-      } catch (err) { toast(err.message); }
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "bot");
-    bindShell();
-  }
-}
+        const [cfg, pend] = await Promise.all([api("/api/pagos/config"), api("/api/pagos?estado=por_verificar")]);
+        const m = cfg.metodos;
+        const campo = (grupo, name, val, ph) => `<input name="${name}" value="${val || ""}" placeholder="${ph}" style="padding:9px; border-radius:8px; border:1.5px solid var(--line); width:100%; margin-top:6px;">`;
 
-/* ======================= CLIENTE: EXPLORAR ======================= */
-/* ======================= COMERCIANTE: COBROS ======================= */
-const NOMBRE_METODO = { pago_movil: "Pago Móvil", zelle: "Zelle", binance: "Binance Pay (USDT)" };
-
-async function viewCobros() {
-  $app.innerHTML = shell(cargando("Cargando tus cobros…"), NAV_COMERCIANTE, "cobros");
-  bindShell();
-  try {
-    const [cfg, pend] = await Promise.all([api("/api/pagos/config"), api("/api/pagos?estado=por_verificar")]);
-    const m = cfg.metodos;
-    const campo = (grupo, name, val, ph) => `<input name="${name}" value="${val || ""}" placeholder="${ph}" style="padding:9px; border-radius:8px; border:1.5px solid var(--line); width:100%; margin-top:6px;">`;
-
-    const html = `
+        const html = `
       <div class="eyebrow">Cobros</div>
       <h2 style="font-size:20px;">Configura cómo te pagan</h2>
       <p class="muted">En Venezuela no hay pasarela automática todavía: el cliente reporta su pago y tú lo confirmas aquí, viendo el comprobante.</p>
@@ -1192,65 +1771,67 @@ async function viewCobros() {
         </div>
       `}
     `;
-    $app.innerHTML = shell(html, NAV_COMERCIANTE, "cobros");
-    bindShell();
+        $app.innerHTML = shell(html, NAV_COMERCIANTE, "cobros");
+        bindShell();
 
-    document.getElementById("tasaForm").onsubmit = async (e) => {
-      e.preventDefault();
+        document.getElementById("tasaForm").onsubmit = async (e) => {
+          e.preventDefault();
+          try {
+            await api("/api/pagos/config", {method: "PUT", body: JSON.stringify({tasaBs: Number(new FormData(e.target).get("tasaBs"))})});
+            toast("Tasa actualizada.");
+            viewCobros();
+          } catch (err) {toast(err.message);}
+        };
+
+        document.getElementById("metodosForm").onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          try {
+            await api("/api/pagos/config", {
+              method: "PUT", body: JSON.stringify({
+                metodos: {
+                  pago_movil: {activo: fd.get("pm_activo") === "on", banco: fd.get("pm_banco"), telefono: fd.get("pm_telefono"), documento: fd.get("pm_documento")},
+                  zelle: {activo: fd.get("ze_activo") === "on", contacto: fd.get("ze_contacto"), titular: fd.get("ze_titular")},
+                  binance: {activo: fd.get("bi_activo") === "on", payId: fd.get("bi_payid"), nombre: fd.get("bi_nombre")},
+                },
+              })
+            });
+            toast("Métodos de pago actualizados.");
+            viewCobros();
+          } catch (err) {toast(err.message);}
+        };
+
+        $app.querySelectorAll("[data-aprobar]").forEach((b) => b.onclick = async () => {
+          try {await api(`/api/pagos/${b.dataset.aprobar}/aprobar`, {method: "POST"}); toast("Pago aprobado."); viewCobros();}
+          catch (err) {toast(err.message);}
+        });
+        $app.querySelectorAll("[data-rechazar]").forEach((b) => b.onclick = () => {
+          const f = $app.querySelector(`[data-rechazoform="${b.dataset.rechazar}"]`);
+          f.style.display = f.style.display === "flex" ? "none" : "flex";
+        });
+        $app.querySelectorAll("[data-rechazoform]").forEach((f) => f.onsubmit = async (e) => {
+          e.preventDefault();
+          try {
+            await api(`/api/pagos/${f.dataset.rechazoform}/rechazar`, {method: "POST", body: JSON.stringify({motivo: new FormData(e.target).get("motivo")})});
+            toast("Pago rechazado.");
+            viewCobros();
+          } catch (err) {toast(err.message);}
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "cobros");
+        bindShell();
+      }
+    }
+
+    async function viewExplorar() {
+      if (!state.comercioActivo) return viewDirectorio();
+
+      $app.innerHTML = shell(cargando("Cargando el menú…"), NAV_CLIENTE, "explorar");
+      bindShell();
       try {
-        await api("/api/pagos/config", { method: "PUT", body: JSON.stringify({ tasaBs: Number(new FormData(e.target).get("tasaBs")) }) });
-        toast("Tasa actualizada.");
-        viewCobros();
-      } catch (err) { toast(err.message); }
-    };
-
-    document.getElementById("metodosForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      try {
-        await api("/api/pagos/config", { method: "PUT", body: JSON.stringify({
-          metodos: {
-            pago_movil: { activo: fd.get("pm_activo") === "on", banco: fd.get("pm_banco"), telefono: fd.get("pm_telefono"), documento: fd.get("pm_documento") },
-            zelle: { activo: fd.get("ze_activo") === "on", contacto: fd.get("ze_contacto"), titular: fd.get("ze_titular") },
-            binance: { activo: fd.get("bi_activo") === "on", payId: fd.get("bi_payid"), nombre: fd.get("bi_nombre") },
-          },
-        }) });
-        toast("Métodos de pago actualizados.");
-        viewCobros();
-      } catch (err) { toast(err.message); }
-    };
-
-    $app.querySelectorAll("[data-aprobar]").forEach((b) => b.onclick = async () => {
-      try { await api(`/api/pagos/${b.dataset.aprobar}/aprobar`, { method: "POST" }); toast("Pago aprobado."); viewCobros(); }
-      catch (err) { toast(err.message); }
-    });
-    $app.querySelectorAll("[data-rechazar]").forEach((b) => b.onclick = () => {
-      const f = $app.querySelector(`[data-rechazoform="${b.dataset.rechazar}"]`);
-      f.style.display = f.style.display === "flex" ? "none" : "flex";
-    });
-    $app.querySelectorAll("[data-rechazoform]").forEach((f) => f.onsubmit = async (e) => {
-      e.preventDefault();
-      try {
-        await api(`/api/pagos/${f.dataset.rechazoform}/rechazar`, { method: "POST", body: JSON.stringify({ motivo: new FormData(e.target).get("motivo") }) });
-        toast("Pago rechazado.");
-        viewCobros();
-      } catch (err) { toast(err.message); }
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_COMERCIANTE, "cobros");
-    bindShell();
-  }
-}
-
-async function viewExplorar() {
-  if (!state.comercioActivo) return viewDirectorio();
-
-  $app.innerHTML = shell(cargando("Cargando el menú…"), NAV_CLIENTE, "explorar");
-  bindShell();
-  try {
-    const { comercio, productos } = await api(`/api/productos/publico/${state.comercioActivo.id}`);
-    const totalAhorro = productos.filter((p) => p.precioAntes).reduce((a, p) => a + (p.precioAntes - p.precio), 0);
-    const html = `
+        const {comercio, productos} = await api(`/api/productos/publico/${state.comercioActivo.id}`);
+        const totalAhorro = productos.filter((p) => p.precioAntes).reduce((a, p) => a + (p.precioAntes - p.precio), 0);
+        const html = `
       <button class="link-btn" id="cambiarComercio">‹ Cambiar de negocio</button>
       <div class="eyebrow">${comercio.categoria || ""}</div>
       <h2 style="font-size:20px;">${comercio.nombre}</h2>
@@ -1279,27 +1860,27 @@ async function viewExplorar() {
         `).join("")}
       </div>
     `;
-    $app.innerHTML = shell(html, NAV_CLIENTE, "explorar");
-    bindShell();
-    document.getElementById("cambiarComercio").onclick = () => { state.comercioActivo = null; state.carrito = []; viewExplorar(); };
-    $app.querySelectorAll("[data-add]").forEach((b) => b.onclick = () => {
-      const existente = state.carrito.find((i) => i.id === b.dataset.add);
-      if (existente) existente.qty++;
-      else state.carrito.push({ id: b.dataset.add, nombre: b.dataset.nombre, precio: Number(b.dataset.precio), qty: 1 });
-      toast(`${b.dataset.nombre} agregado al pedido`);
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "explorar");
-    bindShell();
-  }
-}
+        $app.innerHTML = shell(html, NAV_CLIENTE, "explorar");
+        bindShell();
+        document.getElementById("cambiarComercio").onclick = () => {state.comercioActivo = null; state.carrito = []; viewExplorar();};
+        $app.querySelectorAll("[data-add]").forEach((b) => b.onclick = () => {
+          const existente = state.carrito.find((i) => i.id === b.dataset.add);
+          if (existente) existente.qty++;
+          else state.carrito.push({id: b.dataset.add, nombre: b.dataset.nombre, precio: Number(b.dataset.precio), qty: 1});
+          toast(`${b.dataset.nombre} agregado al pedido`);
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "explorar");
+        bindShell();
+      }
+    }
 
-async function viewDirectorio() {
-  $app.innerHTML = shell(cargando("Buscando negocios…"), NAV_CLIENTE, "explorar");
-  bindShell();
-  try {
-    const { comercios } = await api("/api/comercios/publico");
-    const html = `
+    async function viewDirectorio() {
+      $app.innerHTML = shell(cargando("Buscando negocios…"), NAV_CLIENTE, "explorar");
+      bindShell();
+      try {
+        const {comercios} = await api("/api/comercios/publico");
+        const html = `
       <div class="eyebrow">Directorio</div>
       <h2 style="font-size:20px;">¿En qué negocio quieres comprar?</h2>
       <div class="card">
@@ -1311,23 +1892,23 @@ async function viewDirectorio() {
         `).join("")}
       </div>
     `;
-    $app.innerHTML = shell(html, NAV_CLIENTE, "explorar");
-    bindShell();
-    $app.querySelectorAll("[data-elegir]").forEach((el) => el.onclick = () => {
-      state.comercioActivo = { id: el.dataset.elegir, nombre: el.dataset.nombre };
-      state.carrito = [];
-      viewExplorar();
-    });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "explorar");
-    bindShell();
-  }
-}
+        $app.innerHTML = shell(html, NAV_CLIENTE, "explorar");
+        bindShell();
+        $app.querySelectorAll("[data-elegir]").forEach((el) => el.onclick = () => {
+          state.comercioActivo = {id: el.dataset.elegir, nombre: el.dataset.nombre};
+          state.carrito = [];
+          viewExplorar();
+        });
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "explorar");
+        bindShell();
+      }
+    }
 
-/* ======================= CLIENTE: CARRITO ======================= */
-function viewCarrito() {
-  const total = state.carrito.reduce((a, i) => a + i.precio * i.qty, 0);
-  const html = `
+    /* ======================= CLIENTE: CARRITO ======================= */
+    function viewCarrito() {
+      const total = state.carrito.reduce((a, i) => a + i.precio * i.qty, 0);
+      const html = `
     <div class="eyebrow">Tu pedido</div>
     <h2 style="font-size:20px;">Carrito</h2>
     ${state.carrito.length === 0 ? `
@@ -1344,44 +1925,46 @@ function viewCarrito() {
       <button class="btn btn-verde" style="width:100%; margin-top:16px;" id="confirmarBtn">Confirmar pedido</button>
     `}
   `;
-  $app.innerHTML = shell(html, NAV_CLIENTE, "carrito");
-  bindShell();
-  $app.querySelectorAll("[data-inc]").forEach((b) => b.onclick = () => { state.carrito.find((i) => i.id === b.dataset.inc).qty++; viewCarrito(); });
-  $app.querySelectorAll("[data-dec]").forEach((b) => b.onclick = () => {
-    const it = state.carrito.find((i) => i.id === b.dataset.dec);
-    it.qty--; if (it.qty <= 0) state.carrito = state.carrito.filter((i) => i.id !== it.id);
-    viewCarrito();
-  });
-  const cf = document.getElementById("confirmarBtn");
-  if (cf) cf.onclick = async () => {
-    cf.disabled = true; cf.textContent = "Enviando pedido…";
-    try {
-      const data = await api("/api/pedidos", { method: "POST", body: JSON.stringify({
-        comercioId: state.comercioActivo.id, canal: "web",
-        items: state.carrito.map((i) => ({ productoId: i.id, cantidad: i.qty })),
-      }) });
-      state.carrito = [];
-      toast("Pedido enviado.");
-      state.pedidoParaPagar = data.pedido.id;
-      state.view = "pagar"; render();
-    } catch (err) { toast(err.message); cf.disabled = false; cf.textContent = "Confirmar pedido"; }
-  };
-}
+      $app.innerHTML = shell(html, NAV_CLIENTE, "carrito");
+      bindShell();
+      $app.querySelectorAll("[data-inc]").forEach((b) => b.onclick = () => {state.carrito.find((i) => i.id === b.dataset.inc).qty++; viewCarrito();});
+      $app.querySelectorAll("[data-dec]").forEach((b) => b.onclick = () => {
+        const it = state.carrito.find((i) => i.id === b.dataset.dec);
+        it.qty--; if (it.qty <= 0) state.carrito = state.carrito.filter((i) => i.id !== it.id);
+        viewCarrito();
+      });
+      const cf = document.getElementById("confirmarBtn");
+      if (cf) cf.onclick = async () => {
+        cf.disabled = true; cf.textContent = "Enviando pedido…";
+        try {
+          const data = await api("/api/pedidos", {
+            method: "POST", body: JSON.stringify({
+              comercioId: state.comercioActivo.id, canal: "web",
+              items: state.carrito.map((i) => ({productoId: i.id, cantidad: i.qty})),
+            })
+          });
+          state.carrito = [];
+          toast("Pedido enviado.");
+          state.pedidoParaPagar = data.pedido.id;
+          state.view = "pagar"; render();
+        } catch (err) {toast(err.message); cf.disabled = false; cf.textContent = "Confirmar pedido";}
+      };
+    }
 
-/* ======================= CLIENTE: MIS COMPRAS ======================= */
-async function viewMisCompras() {
-  $app.innerHTML = shell(cargando("Cargando tu historial…"), NAV_CLIENTE, "compras");
-  bindShell();
-  try {
-    const { pedidos } = await api("/api/pedidos");
-    const entregados = pedidos.filter((p) => p.estado === "entregado");
-    const totalGastado = entregados.reduce((a, p) => a + p.total, 0);
+    /* ======================= CLIENTE: MIS COMPRAS ======================= */
+    async function viewMisCompras() {
+      $app.innerHTML = shell(cargando("Cargando tu historial…"), NAV_CLIENTE, "compras");
+      bindShell();
+      try {
+        const {pedidos} = await api("/api/pedidos");
+        const entregados = pedidos.filter((p) => p.estado === "entregado");
+        const totalGastado = entregados.reduce((a, p) => a + p.total, 0);
 
-    const porMes = {};
-    entregados.forEach((p) => { const mes = p.createdAt.slice(0, 7); porMes[mes] = (porMes[mes] || 0) + p.total; });
-    const meses = Object.keys(porMes).sort();
+        const porMes = {};
+        entregados.forEach((p) => {const mes = p.createdAt.slice(0, 7); porMes[mes] = (porMes[mes] || 0) + p.total;});
+        const meses = Object.keys(porMes).sort();
 
-    const html = `
+        const html = `
       <div class="eyebrow">Tu historial</div>
       <h2 style="font-size:20px;">Mis compras</h2>
       <div class="receipt" style="margin-top:16px;">
@@ -1403,29 +1986,29 @@ async function viewMisCompras() {
           </div>`).join("")}
       </div>
     `;
-    $app.innerHTML = shell(html, NAV_CLIENTE, "compras");
-    bindShell();
-    if (meses.length) {
-      new Chart(document.getElementById("clienteChart"), {
-        type: "line",
-        data: { labels: meses, datasets: [{ data: meses.map((m) => porMes[m]), borderColor: "#F2A93B", backgroundColor: "rgba(242,169,59,0.15)", fill: true, tension: 0.35, pointRadius: 3 }] },
-        options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } }, responsive: true, maintainAspectRatio: false },
-      });
+        $app.innerHTML = shell(html, NAV_CLIENTE, "compras");
+        bindShell();
+        if (meses.length) {
+          new Chart(document.getElementById("clienteChart"), {
+            type: "line",
+            data: {labels: meses, datasets: [{data: meses.map((m) => porMes[m]), borderColor: "#F2A93B", backgroundColor: "rgba(242,169,59,0.15)", fill: true, tension: 0.35, pointRadius: 3}]},
+            options: {plugins: {legend: {display: false}}, scales: {y: {display: false}, x: {grid: {display: false}}}, responsive: true, maintainAspectRatio: false},
+          });
+        }
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "compras");
+        bindShell();
+      }
     }
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "compras");
-    bindShell();
-  }
-}
 
-/* ======================= CLIENTE: ESTADO DE PEDIDOS ======================= */
-async function viewEstado() {
-  $app.innerHTML = shell(cargando("Buscando tus pedidos…"), NAV_CLIENTE, "estado");
-  bindShell();
-  try {
-    const { pedidos } = await api("/api/pedidos");
-    const activos = pedidos.filter((p) => p.estado !== "entregado" && p.estado !== "cancelado");
-    const html = `
+    /* ======================= CLIENTE: ESTADO DE PEDIDOS ======================= */
+    async function viewEstado() {
+      $app.innerHTML = shell(cargando("Buscando tus pedidos…"), NAV_CLIENTE, "estado");
+      bindShell();
+      try {
+        const {pedidos} = await api("/api/pedidos");
+        const activos = pedidos.filter((p) => p.estado !== "entregado" && p.estado !== "cancelado");
+        const html = `
       <div class="eyebrow">Seguimiento</div>
       <h2 style="font-size:20px;">Estado de tus pedidos</h2>
       ${activos.length === 0 ? `<div class="empty"><div class="em-mark">📦</div>No tienes pedidos en curso.</div>` : `
@@ -1443,35 +2026,35 @@ async function viewEstado() {
         </div>
       `}
     `;
-    $app.innerHTML = shell(html, NAV_CLIENTE, "estado");
-    bindShell();
-    $app.querySelectorAll("[data-pagar]").forEach((b) => b.onclick = () => { state.pedidoParaPagar = b.dataset.pagar; state.view = "pagar"; render(); });
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "estado");
-    bindShell();
-  }
-}
+        $app.innerHTML = shell(html, NAV_CLIENTE, "estado");
+        bindShell();
+        $app.querySelectorAll("[data-pagar]").forEach((b) => b.onclick = () => {state.pedidoParaPagar = b.dataset.pagar; state.view = "pagar"; render();});
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "estado");
+        bindShell();
+      }
+    }
 
-/* ======================= CLIENTE: PAGAR UN PEDIDO ======================= */
-async function viewPagarPedido() {
-  const pedidoId = state.pedidoParaPagar;
-  if (!pedidoId) { state.view = "estado"; return viewEstado(); }
+    /* ======================= CLIENTE: PAGAR UN PEDIDO ======================= */
+    async function viewPagarPedido() {
+      const pedidoId = state.pedidoParaPagar;
+      if (!pedidoId) {state.view = "estado"; return viewEstado();}
 
-  $app.innerHTML = shell(cargando("Cargando instrucciones de pago…"), NAV_CLIENTE, "estado");
-  bindShell();
-  try {
-    const info = await api(`/api/pagos/pedido/${pedidoId}/instrucciones`);
-    const metodoSel = state.metodoPagoElegido && info.metodos.some((m) => m.tipo === state.metodoPagoElegido) ? state.metodoPagoElegido : (info.metodos[0]?.tipo || null);
-    const activo = info.metodos.find((m) => m.tipo === metodoSel);
-    const bloqueado = info.estadoPago === "pagado" || info.estadoPago === "por_verificar";
+      $app.innerHTML = shell(cargando("Cargando instrucciones de pago…"), NAV_CLIENTE, "estado");
+      bindShell();
+      try {
+        const info = await api(`/api/pagos/pedido/${pedidoId}/instrucciones`);
+        const metodoSel = state.metodoPagoElegido && info.metodos.some((m) => m.tipo === state.metodoPagoElegido) ? state.metodoPagoElegido : (info.metodos[0]?.tipo || null);
+        const activo = info.metodos.find((m) => m.tipo === metodoSel);
+        const bloqueado = info.estadoPago === "pagado" || info.estadoPago === "por_verificar";
 
-    const filaDatos = (m) => {
-      if (m.tipo === "pago_movil") return `<div class="muted">Banco: <b>${m.datos.banco}</b> · Tel: <b>${m.datos.telefono}</b> · C.I./RIF: <b>${m.datos.documento}</b></div>`;
-      if (m.tipo === "zelle") return `<div class="muted">Correo/tel: <b>${m.datos.contacto}</b> · Titular: <b>${m.datos.titular}</b></div>`;
-      return `<div class="muted">Pay ID: <b>${m.datos.payId}</b>${m.datos.nombre ? ` (${m.datos.nombre})` : ""}</div>`;
-    };
+        const filaDatos = (m) => {
+          if (m.tipo === "pago_movil") return `<div class="muted">Banco: <b>${m.datos.banco}</b> · Tel: <b>${m.datos.telefono}</b> · C.I./RIF: <b>${m.datos.documento}</b></div>`;
+          if (m.tipo === "zelle") return `<div class="muted">Correo/tel: <b>${m.datos.contacto}</b> · Titular: <b>${m.datos.titular}</b></div>`;
+          return `<div class="muted">Pay ID: <b>${m.datos.payId}</b>${m.datos.nombre ? ` (${m.datos.nombre})` : ""}</div>`;
+        };
 
-    const html = `
+        const html = `
       <button class="link-btn" id="volverEstado">‹ Volver a mis pedidos</button>
       <div class="eyebrow">Pagar pedido</div>
       <h2 style="font-size:20px;">${info.comercio.nombre}</h2>
@@ -1528,58 +2111,61 @@ async function viewPagarPedido() {
         ` : ""}
       `}
     `;
-    $app.innerHTML = shell(html, NAV_CLIENTE, "estado");
-    bindShell();
-    document.getElementById("volverEstado").onclick = () => { state.pedidoParaPagar = null; state.view = "estado"; render(); };
+        $app.innerHTML = shell(html, NAV_CLIENTE, "estado");
+        bindShell();
+        document.getElementById("volverEstado").onclick = () => {state.pedidoParaPagar = null; state.view = "estado"; render();};
 
-    $app.querySelectorAll("[data-metodo]").forEach((b) => b.onclick = () => { state.metodoPagoElegido = b.dataset.metodo; viewPagarPedido(); });
-    $app.querySelectorAll(".img-picker label").forEach(bindImagePicker);
+        $app.querySelectorAll("[data-metodo]").forEach((b) => b.onclick = () => {state.metodoPagoElegido = b.dataset.metodo; viewPagarPedido();});
+        $app.querySelectorAll(".img-picker label").forEach(bindImagePicker);
 
-    const df = document.getElementById("declararForm");
-    if (df) df.onsubmit = async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const boton = e.target.querySelector("button[type=submit]");
-      boton.disabled = true; boton.textContent = "Enviando…";
-      try {
-        await api(`/api/pagos/pedido/${pedidoId}/declarar`, { method: "POST", body: JSON.stringify({
-          metodo: metodoSel, referencia: fd.get("referencia"),
-          comprobante: fd.get("comprobante") || undefined,
-          tasaBsVista: metodoSel === "pago_movil" ? info.tasaBs : undefined,
-        }) });
-        toast("¡Listo! Tu pago quedó registrado. El comercio lo va a verificar.");
-        state.metodoPagoElegido = null;
-        viewPagarPedido();
-      } catch (err) { toast(err.message); boton.disabled = false; boton.textContent = "Reporté mi pago"; }
-    };
-  } catch (err) {
-    $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "estado");
-    bindShell();
-  }
-}
+        const df = document.getElementById("declararForm");
+        if (df) df.onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.target);
+          const boton = e.target.querySelector("button[type=submit]");
+          boton.disabled = true; boton.textContent = "Enviando…";
+          try {
+            await api(`/api/pagos/pedido/${pedidoId}/declarar`, {
+              method: "POST", body: JSON.stringify({
+                metodo: metodoSel, referencia: fd.get("referencia"),
+                comprobante: fd.get("comprobante") || undefined,
+                tasaBsVista: metodoSel === "pago_movil" ? info.tasaBs : undefined,
+              })
+            });
+            toast("¡Listo! Tu pago quedó registrado. El comercio lo va a verificar.");
+            state.metodoPagoElegido = null;
+            viewPagarPedido();
+          } catch (err) {toast(err.message); boton.disabled = false; boton.textContent = "Reporté mi pago";}
+        };
+      } catch (err) {
+        $app.innerHTML = shell(errorBox(err.message), NAV_CLIENTE, "estado");
+        bindShell();
+      }
+    }
 
-/* ============================== ROUTER ============================== */
-function render() {
-  if (!state.role) { renderLogin(); return; }
-  if (state.role === "comerciante") {
-    ({ dashboard: viewDashboard, menu: viewMenu, clientes: viewCRM, pedidos: viewPedidos, cobros: viewCobros, bot: viewBot })[state.view]();
-  } else {
-    ({ explorar: viewExplorar, carrito: viewCarrito, compras: viewMisCompras, estado: viewEstado, pagar: viewPagarPedido })[state.view]();
-  }
-}
+    /* ============================== ROUTER ============================== */
+    function render() {
+      if (!state.role) {renderLogin(); return;}
+      if (state.role === "comerciante") {
+        ({dashboard: viewDashboard, menu: viewMenu, clientes: viewCRM, pedidos: viewPedidos, cobros: viewCobros, bot: viewBot})[state.view]();
+      } else {
+        ({explorar: viewExplorar, carrito: viewCarrito, compras: viewMisCompras, estado: viewEstado, pagar: viewPagarPedido})[state.view]();
+      }
+    }
 
-// Si llegamos desde el enlace de un correo real (?resetToken=xxx), saltamos
-// directo a la pantalla de "elegir nueva contraseña".
-const tokenDeLaUrl = new URLSearchParams(window.location.search).get("resetToken");
-if (tokenDeLaUrl) {
-  state.authMode = "recuperar-cambiar";
-  state.recuperarToken = tokenDeLaUrl;
-}
+    // Si llegamos desde el enlace de un correo real (?resetToken=xxx), saltamos
+    // directo a la pantalla de "elegir nueva contraseña".
+    const tokenDeLaUrl = new URLSearchParams(window.location.search).get("resetToken");
+    if (tokenDeLaUrl) {
+      state.authMode = "recuperar-cambiar";
+      state.recuperarToken = tokenDeLaUrl;
+    }
 
-renderLogin();
+    renderLogin();
 
 
 
-</script>
+  </script>
 </body>
+
 </html>
